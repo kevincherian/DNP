@@ -6,6 +6,8 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="password_hint">Password</string>
     <string name="username_hint">UserName</string>
+    <string name="name_hint">Full name</string>
+    <string name="type_hint">Type</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="email_hint">Email</string>
     <string name="register_hint">Register</string>
@@ -36,5 +38,14 @@
     <string name="hint_referrerClinic">Referrer Clinic</string>
     <string name="hint_referrerAptId">Appointment Id</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="logo">App Logo</string>
+    <string name="view_treatment_text">View Treatment Progress</string>
+    <string name="manage_treatment_text">Manage Treatments</string>
+    <string name="treatment_history_text">Treatment History</string>
+    <string name="appointment_list_text">Appointments</string>
+    <string name="appointment_text">Appointments</string>
+    <string name="new_appointment_text">New</string>
+    <string name="manage_account_text">Manage Account</string>
+    <string name="communication_text">Communication</string>
 
 </resources>

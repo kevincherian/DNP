@@ -10,5 +10,6 @@
     <dimen name="xlarge_font_size">20.0sp</dimen>
     <dimen name="dialog_button_radius">4dip</dimen>
     <dimen name="paper_button_height">50dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

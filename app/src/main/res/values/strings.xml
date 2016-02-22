@@ -35,5 +35,6 @@
     <string name="hint_referrerName">Referrer Name</string>
     <string name="hint_referrerClinic">Referrer Clinic</string>
     <string name="hint_referrerAptId">Appointment Id</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

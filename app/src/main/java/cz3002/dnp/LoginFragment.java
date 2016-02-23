@@ -11,12 +11,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import java.io.IOException;
+
 import cz3002.dnp.R;
 
 /**
  * Created by hizac on 23/2/2016.
  */
-public class LoginFragment extends Fragment{
+public class LoginFragment extends Fragment implements Constants {
     ViewGroup rootView;
     @Nullable
     @Override
@@ -33,28 +40,41 @@ public class LoginFragment extends Fragment{
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                logIn();
-            }
-        });
-        loginBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
                 logIn();
-                return true;
             }
         });
         return rootView;
     }
 
     private void logIn() {
-        Toast.makeText(getContext(),"Login",Toast.LENGTH_SHORT).show();
-    }
-
-    private void signUp() {
         EditText username = (EditText) rootView.findViewById(R.id.usernameField);
         String usernameString = username.getText().toString();
         EditText password = (EditText) rootView.findViewById(R.id.passwordField);
         String passwordString = password.getText().toString();
-        Toast.makeText(getContext(),String.format("Username: %s\nPassword: %s",usernameString,passwordString),Toast.LENGTH_SHORT).show();
+        try {
+            String query = String.format("select `password` from `user` where username='%s'", usernameString);
+            Document document = Jsoup.connect(SERVER + query).get();
+            String query_json = document.body().html();
+            if (query_json == "0") {
+                Toast.makeText(getContext(), "Wrong username!", Toast.LENGTH_LONG).show();
+            } else {
+                JSONArray query_result_arr = new JSONArray(query_json);
+                JSONObject query_result_obj = query_result_arr.getJSONObject(0);
+                String realPassword = query_result_obj.getString("password");
+                if (realPassword.equals(passwordString)) {
+                    Toast.makeText(getContext(), "Welcome!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Wrong password!", Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void signUp() {
+        // Code here
     }
 }

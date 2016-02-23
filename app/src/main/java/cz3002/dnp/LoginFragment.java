@@ -55,7 +55,7 @@ public class LoginFragment extends Fragment implements Constants {
             String query = String.format("select `password` from `user` where username='%s'", usernameString);
             Document document = Jsoup.connect(SERVER + query).get();
             String query_json = document.body().html();
-            if (query_json == "0") {
+            if (query_json.equals("0")) {
                 Toast.makeText(getContext(), "Wrong username!", Toast.LENGTH_LONG).show();
             } else {
                 JSONArray query_result_arr = new JSONArray(query_json);

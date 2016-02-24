@@ -82,7 +82,7 @@ public class LoginFragment extends Fragment implements Constants {
     }
 
     private void signUp() {
-        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SignupFragment()).commit();
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("login").replace(R.id.main_container, new SignupFragment()).commit();
     }
 
     private void recoverPassword() {

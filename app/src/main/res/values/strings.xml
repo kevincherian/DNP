@@ -41,8 +41,7 @@
     <string name="hint_referrerAptId">Appointment Id</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="logo">App Logo</string>
-    <string name="view_treatment_text">View Treatment Progress</string>
-    <string name="manage_treatment_text">Manage Treatments</string>
+    <string name="treatment_text">Treatment Progress</string>
     <string name="treatment_history_text">Treatment History</string>
     <string name="appointment_list_text">Appointments</string>
     <string name="appointment_text">Appointments</string>

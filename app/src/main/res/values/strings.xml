@@ -4,8 +4,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="doctor_signup_label">Doctor</string>
+    <string name="patient_signup_label">Patient</string>
     <string name="password_hint">Password</string>
-    <string name="username_hint">UserName</string>
+    <string name="username_hint">Username</string>
     <string name="name_hint">Full name</string>
     <string name="type_hint">Type</string>
     <string name="title_activity_sign_up">SignUpActivity</string>

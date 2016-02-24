@@ -43,6 +43,13 @@ public class LoginFragment extends Fragment implements Constants {
                 logIn();
             }
         });
+        Button forgetPasswordBtn = (Button)rootView.findViewById(R.id.btn_ForgetPass);
+        forgetPasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recoverPassword();
+            }
+        });
         return rootView;
     }
 
@@ -54,15 +61,15 @@ public class LoginFragment extends Fragment implements Constants {
         try {
             String query = String.format("select `password` from `user` where username='%s'", usernameString);
             Document document = Jsoup.connect(SERVER + query).get();
-            String query_json = document.body().html();
-            if (query_json.equals("0")) {
+            String queryJson = document.body().html();
+            if (queryJson.equals("0")) {
                 Toast.makeText(getContext(), "Wrong username!", Toast.LENGTH_LONG).show();
             } else {
-                JSONArray query_result_arr = new JSONArray(query_json);
-                JSONObject query_result_obj = query_result_arr.getJSONObject(0);
-                String realPassword = query_result_obj.getString("password");
+                JSONArray queryResultArr = new JSONArray(queryJson);
+                JSONObject queryResultObj = queryResultArr.getJSONObject(0);
+                String realPassword = queryResultObj.getString("password");
                 if (realPassword.equals(passwordString)) {
-                    Toast.makeText(getContext(), "Welcome!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), String.format("Welcome %s!", usernameString), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), "Wrong password!", Toast.LENGTH_LONG).show();
                 }
@@ -75,6 +82,10 @@ public class LoginFragment extends Fragment implements Constants {
     }
 
     private void signUp() {
-        // Code here
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new SignupFragment()).commit();
+    }
+
+    private void recoverPassword() {
+        Toast.makeText(getContext(), "Your password has just been sent to your email!", Toast.LENGTH_SHORT).show();
     }
 }

@@ -29,6 +29,7 @@ public class LoginFragment extends Fragment implements Constants {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.activity_login, container, false);
+
         Button signUpBtn = (Button)rootView.findViewById(R.id.signupButton);
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +51,16 @@ public class LoginFragment extends Fragment implements Constants {
                 recoverPassword();
             }
         });
+        EditText username = (EditText) rootView.findViewById(R.id.usernameField);
+
+        try {
+            Bundle bundle = this.getArguments();
+            String givenUsername = bundle.get("username").toString();
+            username.setText(givenUsername);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
         return rootView;
     }
 
@@ -59,17 +70,23 @@ public class LoginFragment extends Fragment implements Constants {
         EditText password = (EditText) rootView.findViewById(R.id.passwordField);
         String passwordString = password.getText().toString();
         try {
-            String query = String.format("select `password` from `user` where username='%s'", usernameString);
+            String query = String.format("select * from `user` where username='%s'", usernameString);
             Document document = Jsoup.connect(SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) {
                 Toast.makeText(getContext(), "Wrong username!", Toast.LENGTH_LONG).show();
             } else {
+                // Query user information
                 JSONArray queryResultArr = new JSONArray(queryJson);
                 JSONObject queryResultObj = queryResultArr.getJSONObject(0);
                 String realPassword = queryResultObj.getString("password");
+                // Query user type (doctor or patient)
+
                 if (realPassword.equals(passwordString)) {
-                    Toast.makeText(getContext(), String.format("Welcome %s!", usernameString), Toast.LENGTH_LONG).show();
+                    // Create user object
+                    UserCtrl userCtrl = new UserCtrl();
+                    MainActivity.getActivity().currentUser = userCtrl.getUserInfo(MainActivity.getActivity().currentUser, usernameString);
+                    Toast.makeText(getContext(), String.format("Welcome %s!", MainActivity.getActivity().currentUser.getUsername()), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), "Wrong password!", Toast.LENGTH_LONG).show();
                 }

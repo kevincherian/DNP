@@ -64,7 +64,28 @@ public class SignupFragment extends Fragment implements Constants {
         String selectedTypeString = selectedTypeRadioBtn.getText().toString().toLowerCase();
 
         /*===================================================
-            Check validation and insert to database
+            Check validation client-side
+        ===================================================*/
+        if (usernameString.equals("")) {
+            Toast.makeText(MainActivity.getActivity(), "Please enter username!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (passwordString.equals("")) {
+            Toast.makeText(MainActivity.getActivity(), "Please enter password!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (emailString.equals("")) {
+            Toast.makeText(MainActivity.getActivity(), "Please enter email!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (fullnameString.equals("")) {
+            Toast.makeText(MainActivity.getActivity(), "Please enter your full name!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
+        /*===================================================
+            Check validation server-side and insert to database
          ===================================================*/
         try {
             String query = String.format("select `username` from `user` where username='%s'", usernameString); // query to check username existence
@@ -94,7 +115,13 @@ public class SignupFragment extends Fragment implements Constants {
                     if (queryJson.equals("0")) { // Error happens
                         Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
                     } else { // Success
-                        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new LoginFragment()).commit();
+                        // Pass the username to LoginFragment
+                        Bundle bundle = new Bundle();
+                        bundle.putString("username", usernameString);
+                        LoginFragment loginFragment = new LoginFragment();
+                        loginFragment.setArguments(bundle);
+                        // Switch to LoginFragment
+                        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, loginFragment).commit();
                         Toast.makeText(MainActivity.getActivity(), "Your account has just been created!\nPlease login using your new account.", Toast.LENGTH_LONG).show();
                     }
                 }

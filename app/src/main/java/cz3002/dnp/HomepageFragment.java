@@ -35,8 +35,21 @@ public class HomepageFragment extends Fragment implements Constants {
         if (MainActivity.getActivity().currentUser.isDoctor()) { // If user is a doctor
             greetingText.setText(String.format("Hello, Dr. %s!", MainActivity.getActivity().currentUser.getUsername()));
         }
+
+        // Get Manage Account Button
+        Button manageAccBtn = (Button) rootView.findViewById(R.id.manageAccountButton);
+        manageAccBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toManageAccFragment();
+            }
+        });
+
         return rootView;
     }
 
 
+    private void toManageAccFragment() {
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new ManageAccountFragment()).commit();
+    }
 }

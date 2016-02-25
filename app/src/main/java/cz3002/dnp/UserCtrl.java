@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by hizac on 24/2/2016.
  */
 public class UserCtrl implements Constants {
-    //Query user information using username
+    //Query user information using id
     public User getUserInfo(User user, int id) {
         // Query user data from the server
         try {
@@ -57,6 +57,7 @@ public class UserCtrl implements Constants {
         return user;
     }
 
+    //Query user information using username
     public User getUserInfo(User user, String username) {
         // Query user data from the server
         try {
@@ -98,6 +99,18 @@ public class UserCtrl implements Constants {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return user;
+    }
+
+    // Quickly set all the information for a particular user
+    public User setUserInfo(User user, int id, String username, String password, String email, String fullname, boolean type) {
+        user.setId(id);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setFullname(fullname);
+        user.setType(type);
+
         return user;
     }
 }

@@ -1,4 +1,4 @@
-package cz3002.dnp;
+package cz3002.dnp.Entity;
 
 /**
  * Created by hizac on 24/2/2016.

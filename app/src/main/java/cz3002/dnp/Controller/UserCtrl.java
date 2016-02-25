@@ -1,4 +1,4 @@
-package cz3002.dnp;
+package cz3002.dnp.Controller;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -7,6 +7,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+
+import cz3002.dnp.Constants;
+import cz3002.dnp.Entity.User;
 
 /**
  * Created by hizac on 24/2/2016.

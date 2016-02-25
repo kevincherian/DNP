@@ -86,7 +86,8 @@ public class LoginFragment extends Fragment implements Constants {
                     // Create user object
                     UserCtrl userCtrl = new UserCtrl();
                     MainActivity.getActivity().currentUser = userCtrl.getUserInfo(MainActivity.getActivity().currentUser, usernameString);
-                    Toast.makeText(getContext(), String.format("Welcome %s!", MainActivity.getActivity().currentUser.getUsername()), Toast.LENGTH_LONG).show();
+                    MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new HomepageFragment()).commit();
+                    Toast.makeText(MainActivity.getActivity(), String.format("Welcome %s!", MainActivity.getActivity().currentUser.getUsername()), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), "Wrong password!", Toast.LENGTH_LONG).show();
                 }

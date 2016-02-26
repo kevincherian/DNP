@@ -30,8 +30,36 @@ public class CreateEditAppointmentFragment extends Fragment implements Constants
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.activity_create_edit_appointment, container, false);
 
+        autoFillInCurrentUser();
+
+        // Get Cancel button
+        Button cancelBtn = (Button) rootView.findViewById(R.id.cancelButton);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancel();
+            }
+        });
+
         return rootView;
     }
 
+    private void autoFillInCurrentUser () {
+        // Set given info
+        String usernameString = MainActivity.getActivity().currentUser.getUsername();
+        boolean isCurrentDoctor = MainActivity.getActivity().currentUser.isDoctor();
 
+        EditText userField;
+        if(isCurrentDoctor) { // If current user is a doctor
+            userField = (EditText) rootView.findViewById(R.id.doctorField);
+        } else {
+            userField = (EditText) rootView.findViewById(R.id.patientField);
+        }
+        userField.setText(usernameString);
+        userField.setEnabled(false);
+    }
+
+    private void cancel() {
+        MainActivity.getActivity().onBackPressed();
+    }
 }

@@ -33,7 +33,8 @@
     <string name="error_invalid_password">Invalid password provided</string>
     <string name="error_invalid_email">Invalid e-mail provided</string>
     <string name="hint_servicetype">Service Type</string>
-    <string name="hint_doctorname">Doctor name</string>
+    <string name="hint_doctorname">Doctor username</string>
+    <string name="hint_patientname">Patient username</string>
     <string name="hint_date">Date and Time ("MM/dd/yyyy HH:mm")</string>
     <string name="hint_healthIssue">Health Issue</string>
     <string name="hint_referrerName">Referrer Name</string>
@@ -45,8 +46,10 @@
     <string name="treatment_history_text">Treatment History</string>
     <string name="appointment_list_text">Appointments</string>
     <string name="appointment_text">Appointments</string>
+    <string name="create_edit_appointment_text">Create/Edit Appointments</string>
     <string name="new_appointment_text">New</string>
     <string name="manage_account_text">Manage Account</string>
     <string name="communication_text">Communication</string>
+    <string name="appointment_info_hint">More information</string>
 
 </resources>

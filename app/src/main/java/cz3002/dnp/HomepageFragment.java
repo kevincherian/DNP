@@ -45,11 +45,24 @@ public class HomepageFragment extends Fragment implements Constants {
             }
         });
 
+        // Get Appointment Button
+        Button appointmentListBtn = (Button) rootView.findViewById(R.id.appointmentButton);
+        appointmentListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toAppointmentList();
+            }
+        });
+
         return rootView;
     }
 
 
     private void toManageAccFragment() {
         MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new ManageAccountFragment()).commit();
+    }
+
+    private void toAppointmentList() {
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new AppointmentListFragment()).commit();
     }
 }

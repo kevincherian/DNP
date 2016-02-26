@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,14 +12,10 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -121,8 +116,8 @@ public class CreateEditAppointmentFragment extends Fragment implements Constants
 
     private void autoFillInCurrentUser () {
         // Set given info
-        String usernameString = MainActivity.getActivity().currentUser.getUsername();
-        boolean isCurrentDoctor = MainActivity.getActivity().currentUser.isDoctor();
+        String usernameString = UserCtrl.getInstance().currentUser.getUsername();
+        boolean isCurrentDoctor = UserCtrl.getInstance().currentUser.isDoctor();
 
         EditText userField;
         if(isCurrentDoctor) { // If current user is a doctor
@@ -147,13 +142,10 @@ public class CreateEditAppointmentFragment extends Fragment implements Constants
         String datetimeString = format.format(datetime);
         EditText doctorUsername = (EditText) rootView.findViewById(R.id.doctorField);
         String doctorUsernameString = doctorUsername.getText().toString(); // Get doctor username
-        UserCtrl userCtrl = new UserCtrl();
-        User doctor = new User();
-        doctor = userCtrl.getUserInfo(doctor, doctorUsernameString); // Get object doctor
+        User doctor = UserCtrl.getInstance().getUser(doctorUsernameString); // Get object doctor
         EditText patientUsername = (EditText) rootView.findViewById(R.id.doctorField);
         String patientUsernameString = patientUsername.getText().toString(); // Get patient username
-        User patient = new User();
-        patient = userCtrl.getUserInfo(patient, patientUsernameString); // Get object patient
+        User patient = UserCtrl.getInstance().getUser(patientUsernameString); // Get object patient
         EditText info = (EditText) rootView.findViewById(R.id.infoField);
         String infoString = info.getText().toString(); // Get information
         String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed

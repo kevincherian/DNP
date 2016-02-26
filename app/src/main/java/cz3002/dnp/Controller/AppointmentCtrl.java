@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import cz3002.dnp.Constants;
@@ -19,50 +20,63 @@ import cz3002.dnp.Entity.User;
  * Created by hizac on 26/2/2016.
  */
 public class AppointmentCtrl implements Constants {
-    // Quickly set info for an appointment object
-    public Appointment setAppointmentInfo(Appointment appointment, int id, Date time, User doctor, User patient, String info, String status) {
-        appointment.setId(id);
-        appointment.setTime(time);
-        appointment.setDoctor(doctor);
-        appointment.setPatient(patient);
-        appointment.setInfo(info);
-        appointment.setStatus(status);
-
-        return appointment;
+    
+    private static AppointmentCtrl instance;
+    public static AppointmentCtrl getInstance() {
+        if (instance == null) {
+            instance = new AppointmentCtrl();
+        }
+        return instance;
     }
 
-    // Query information of an appointment from server using ID
-    public Appointment getAppointmentInfo(Appointment appointment, int id) {
+    // Constructor
+    private AppointmentCtrl(){
+        appointments = new ArrayList<>();
+        retrieveAppointments();
+    }
+
+    private ArrayList<Appointment> appointments;
+
+    // Get all appointments from server
+    private void retrieveAppointments(){
         try {
-            String query = String.format("select * from `appointment` where id=%d", id);
+            if (UserCtrl.getInstance().currentUser.getId() < 0) { return; } // If user has not logged in
+            String query;
+            if (UserCtrl.getInstance().currentUser.isDoctor()) {
+                query = String.format("select * from `appointment` where doctorID=%d", UserCtrl.getInstance().currentUser.getId());
+            } else {
+                query = String.format("select * from `appointment` where patientID=%d", UserCtrl.getInstance().currentUser.getId());
+            }
             Document document = Jsoup.connect(SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // If try to retrieve info fails
-                return appointment;
+                return;
             }
             // Otherwise if success, continue
 
             // Process JSON format
             JSONArray queryResultArr = new JSONArray(queryJson);
-            JSONObject queryResultObj = queryResultArr.getJSONObject(0);
 
-            // Read information
-            String timeString = queryResultObj.getString("time");
-            Date time = new Date();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            time = format.parse(timeString);
-            int doctorId = Integer.parseInt(queryResultObj.getString("doctorID"));
-            int patientId = Integer.parseInt(queryResultObj.getString("patientID"));
-            UserCtrl userCtrl = new UserCtrl();
-            User doctor = new User();
-            userCtrl.getUserInfo(doctor, doctorId);
-            User patient = new User();
-            userCtrl.getUserInfo(patient, patientId);
-            String infoString = queryResultObj.getString("info");
-            String statusString = queryResultObj.getString("status");
+            for (int i = 0; i < queryResultArr.length(); i++) {
+                JSONObject queryResultObj = queryResultArr.getJSONObject(i);
 
-            // Set appointment info
-            setAppointmentInfo(appointment, id, time, doctor, patient, infoString, statusString);
+                // Read information
+                int id = Integer.parseInt(queryResultObj.getString("id"));
+                String timeString = queryResultObj.getString("time");
+                Date time;
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                time = format.parse(timeString);
+                int doctorId = Integer.parseInt(queryResultObj.getString("doctorID"));
+                int patientId = Integer.parseInt(queryResultObj.getString("patientID"));
+                User doctor = UserCtrl.getInstance().getUser(doctorId);
+                User patient = UserCtrl.getInstance().getUser(patientId);
+                String infoString = queryResultObj.getString("info");
+                String statusString = queryResultObj.getString("status");
+
+                // Set appointment info
+                createAppointment(id, time, doctor, patient, infoString, statusString);
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -71,7 +85,30 @@ public class AppointmentCtrl implements Constants {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+    }
+    public Appointment createAppointment(int id, Date time, User doctor, User patient, String info, String status) {
+        Appointment appointment = new Appointment();
+        appointment.setId(id);
+        appointment.setTime(time);
+        appointment.setDoctor(doctor);
+        appointment.setPatient(patient);
+        appointment.setInfo(info);
+        appointment.setStatus(status);
+        appointments.add(appointment);
         return appointment;
+    }
+
+    // Query an appointment using ID
+    public Appointment getAppointmentInfo(int id) {
+        for (Appointment appointment : appointments) {
+            if (appointment.getId() == id) {
+                return appointment;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Appointment> getAppointments() {
+        return appointments;
     }
 }

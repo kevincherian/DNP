@@ -50,4 +50,9 @@ public class Appointment {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(id);
+    }
 }

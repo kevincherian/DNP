@@ -27,14 +27,13 @@
         android:layout_alignParentRight="true" />
 
 
-    <ScrollView
-        android:layout_marginTop="100dp"
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView"
-        android:layout_centerHorizontal="true">
+        android:id="@+id/appointment_list"
+        android:layout_below="@+id/newAppointmentButton"
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
-    </ScrollView>
+
 
 
 </RelativeLayout>

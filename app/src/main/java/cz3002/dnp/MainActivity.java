@@ -14,7 +14,6 @@ public class MainActivity extends AppCompatActivity implements Constants {
     public static MainActivity getActivity(){
         return activity;
     }
-    public static User currentUser = new User();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         activity = this;

@@ -19,6 +19,8 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
+import cz3002.dnp.Controller.UserCtrl;
+
 /**
  * Created by hizac on 23/2/2016.
  */
@@ -31,9 +33,9 @@ public class HomepageFragment extends Fragment implements Constants {
 
         // Set greeting text
         TextView greetingText = (TextView) rootView.findViewById(R.id.greetingText);
-        greetingText.setText(String.format("Hello, %s!", MainActivity.getActivity().currentUser.getUsername()));
-        if (MainActivity.getActivity().currentUser.isDoctor()) { // If user is a doctor
-            greetingText.setText(String.format("Hello, Dr. %s!", MainActivity.getActivity().currentUser.getUsername()));
+        greetingText.setText(String.format("Hello, %s!", UserCtrl.getInstance().currentUser.getUsername()));
+        if (UserCtrl.getInstance().currentUser.isDoctor()) { // If user is a doctor
+            greetingText.setText(String.format("Hello, Dr. %s!", UserCtrl.getInstance().currentUser.getUsername()));
         }
 
         // Get Manage Account Button

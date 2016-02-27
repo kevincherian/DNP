@@ -1,5 +1,7 @@
 package cz3002.dnp.Adapter;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import cz3002.dnp.Controller.AppointmentCtrl;
+import cz3002.dnp.Controller.UserCtrl;
 import cz3002.dnp.Entity.Appointment;
 import cz3002.dnp.MainActivity;
 import cz3002.dnp.R;
@@ -50,8 +54,6 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TextView tv = (TextView)itemView.findViewById(R.id.title);
-
                     goToAnotherPage(item);
                 }
             });
@@ -63,8 +65,34 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
         public void setItem(Appointment item) {
             this.item = item;
-            TextView tv = (TextView)itemView.findViewById(R.id.title);
-            tv.setText(item.getStatus());
+            TextView tvTime = (TextView)itemView.findViewById(R.id.time);
+            // Reformat time
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+            String timeString = format.format(item.getTime());
+            tvTime.setText(String.format("Happening at %s", timeString));
+
+            TextView tvPartner = (TextView) itemView.findViewById(R.id.partner);
+            String partnerString;
+            if (UserCtrl.getInstance().currentUser.isDoctor()) {
+                partnerString = String.format("with patient %s", item.getPatient().getUsername());
+            } else {
+                partnerString = String.format("with Dr. %s",  item.getDoctor().getUsername());
+            }
+            tvPartner.setText(partnerString);
+
+            TextView tvInfo = (TextView) itemView.findViewById(R.id.info);
+            tvInfo.setText(item.getInfo());
+
+            TextView tvStatus = (TextView) itemView.findViewById(R.id.status);
+            String statusString = item.getStatus();
+            if (statusString.equals("Pending")) {
+                tvStatus.setTextColor(Color.GREEN);
+            } else if (statusString.equals("Confirmed")) {
+                tvStatus.setTextColor(Color.BLUE);
+            } else {
+                tvStatus.setTextColor(Color.RED);
+            }
+            tvStatus.setText(statusString);
         }
     }
 }

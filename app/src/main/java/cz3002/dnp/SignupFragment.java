@@ -121,6 +121,7 @@ public class SignupFragment extends Fragment implements Constants {
                         LoginFragment loginFragment = new LoginFragment();
                         loginFragment.setArguments(bundle);
                         // Switch to LoginFragment
+                        cancel();
                         MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, loginFragment).commit();
                         Toast.makeText(MainActivity.getActivity(), "Your account has just been created!\nPlease login using your new account.", Toast.LENGTH_LONG).show();
                     }

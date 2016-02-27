@@ -83,7 +83,7 @@ public class ManageAccountFragment extends Fragment implements Constants {
         // Erase user information
         UserCtrl.getInstance().currentUser = UserCtrl.getInstance().createUser(-1, null, null, null, null, false);
         cancel();
-        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new LoginFragment()).commit();
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, loginFragment).commit();
         Toast.makeText(MainActivity.getActivity(), "You have logged out!", Toast.LENGTH_LONG).show();
     }
 

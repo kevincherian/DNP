@@ -64,9 +64,7 @@ public class UserCtrl implements Constants {
             user.setType(isDoctor);
 
             return user;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         return user;

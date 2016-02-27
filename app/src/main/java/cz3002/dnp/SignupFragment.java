@@ -132,7 +132,6 @@ public class SignupFragment extends Fragment implements Constants {
             e.printStackTrace();
         }
 
-
     }
 
     private void cancel() {

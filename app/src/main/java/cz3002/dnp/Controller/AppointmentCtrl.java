@@ -86,6 +86,41 @@ public class AppointmentCtrl implements Constants {
             e.printStackTrace();
         }
     }
+
+    // Retrieve an individual appointment and put it to internal database
+    public Appointment retrieveAnAppointment(Date time, User doctor, User patient) {
+        Appointment result = new Appointment();
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String timeString = format.format(time);
+            String query = String.format("select * from `appointment` where doctorID=%d and patientID=%d and time='%s'", doctor.getId(), patient.getId(), timeString);
+            Document document = Jsoup.connect(SERVER + query).get();
+            String queryJson = document.body().html();
+            if (queryJson.equals("0")) { // If try to retrieve info fails
+                return null;
+            }
+            // Otherwise if success, continue
+
+            // Process JSON format
+            JSONArray queryResultArr = new JSONArray(queryJson);
+            JSONObject queryResultObj = queryResultArr.getJSONObject(0);
+
+            // Read information
+            int id = Integer.parseInt(queryResultObj.getString("id"));
+            String infoString = queryResultObj.getString("info");
+            String statusString = queryResultObj.getString("status");
+
+            result = createAppointment(id, time, doctor, patient, infoString, statusString);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
     public Appointment createAppointment(int id, Date time, User doctor, User patient, String info, String status) {
         Appointment appointment = new Appointment();
         appointment.setId(id);

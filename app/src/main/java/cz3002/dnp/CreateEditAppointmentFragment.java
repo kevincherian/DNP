@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+import cz3002.dnp.Controller.AppointmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 import cz3002.dnp.Entity.User;
 
@@ -62,7 +63,7 @@ public class CreateEditAppointmentFragment extends Fragment implements Constants
         String doctorUsernameString = doctorUsername.getText().toString();
         // Query on server using that username
         try {
-            String query = String.format("select `username` from `user` where username='%s'", doctorUsernameString); // query to check username existence
+            String query = String.format("select `username` from `user` inner join `doctor` on user.id=doctor.userid where username='%s'", doctorUsernameString); // query to check username existence
             Document document = Jsoup.connect(SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Username not existed
@@ -73,11 +74,11 @@ public class CreateEditAppointmentFragment extends Fragment implements Constants
         }
 
         // Get patient's username
-        EditText patientUsername = (EditText) rootView.findViewById(R.id.doctorField);
+        EditText patientUsername = (EditText) rootView.findViewById(R.id.patientField);
         String patientUsernameString = patientUsername.getText().toString();
         // Query on server using that username
         try {
-            String query = String.format("select `username` from `user` where username='%s'", patientUsernameString); // query to check username existence
+            String query = String.format("select `username` from `user` inner join `patient` on user.id=patient.userid where username='%s'", patientUsernameString); // query to check username existence
             Document document = Jsoup.connect(SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Username not existed
@@ -161,6 +162,7 @@ public class CreateEditAppointmentFragment extends Fragment implements Constants
                 return;
             }
             // Otherwise, if success, go back to Appointment List Fragment and notify user
+            AppointmentCtrl.getInstance().retrieveAnAppointment(datetime, doctor, patient); // Put the appointment just created to internal database
             cancel(); // Stop current job, go back to Appointment List Fragment
             Toast.makeText(MainActivity.getActivity(), "Appointment submitted!", Toast.LENGTH_LONG).show();
 

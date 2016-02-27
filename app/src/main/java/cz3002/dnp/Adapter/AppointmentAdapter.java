@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -55,6 +56,23 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 @Override
                 public void onClick(View v) {
                     goToAnotherPage(item);
+                }
+            });
+            itemView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+
+                        case MotionEvent.ACTION_DOWN:
+                            itemView.setBackgroundColor(Color.WHITE);
+                            break;
+
+                        default:
+                            itemView.setBackgroundColor(Color.parseColor("#FF329593"));
+                            break;
+                    }
+
+                    return true;
                 }
             });
         }

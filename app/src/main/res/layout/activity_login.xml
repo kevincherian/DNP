@@ -81,7 +81,6 @@
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-
         android:text="Login"
         android:layout_marginBottom="63dp"
         android:id="@+id/loginButton"

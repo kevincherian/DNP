@@ -27,12 +27,12 @@ import cz3002.dnp.Entity.User;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class CreateEditAppointmentFragment extends Fragment implements Constants {
+public class MakeAppointmentFragment extends Fragment implements Constants {
     ViewGroup rootView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = (ViewGroup) inflater.inflate(R.layout.activity_create_edit_appointment, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.activity_make_appointment, container, false);
 
         autoFillInCurrentUser();
 

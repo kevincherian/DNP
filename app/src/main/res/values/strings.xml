@@ -46,7 +46,7 @@
     <string name="treatment_history_text">Treatment History</string>
     <string name="appointment_list_text">Appointments</string>
     <string name="appointment_text">Appointments</string>
-    <string name="create_edit_appointment_text">Create/Edit Appointments</string>
+    <string name="create_edit_appointment_text">Make an Appointment</string>
     <string name="new_appointment_text">New</string>
     <string name="manage_account_text">Manage Account</string>
     <string name="communication_text">Communication</string>

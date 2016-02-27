@@ -57,6 +57,17 @@ public class LoginFragment extends Fragment implements Constants {
             }
         });
 
+        EditText username = (EditText) rootView.findViewById(R.id.usernameField);
+
+        try {
+            Bundle bundle = this.getArguments();
+            String givenUsername = bundle.get("username").toString();
+            username.setText(givenUsername);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+
         return rootView;
     }
 

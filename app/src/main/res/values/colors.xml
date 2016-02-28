@@ -3,4 +3,5 @@
     <color name="colorPrimary">#ff006d77</color>
     <color name="colorSecondary">#FF329593</color>
     <color name="colorButton">#FF329593</color>
+    <color name="colorWarning">#FF7D0000</color>
 </resources>

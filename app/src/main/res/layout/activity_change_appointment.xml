@@ -27,7 +27,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/make_appointment_text"
+            android:text="@string/change_appointment_text"
             android:textColor="@android:color/black"
             android:textSize="24sp" />
 
@@ -69,6 +69,15 @@
             android:hint="@string/appointment_info_hint"
             android:allowUndo="true" />
 
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Delete this Appointment"
+            android:background="@color/colorWarning"
+            android:textColor="@android:color/white"            />
+
 
     </LinearLayout>
     </ScrollView>
@@ -80,7 +89,7 @@
         <Button
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:text="Submit"
+            android:text="Save changes"
             android:id="@+id/submitButton"
             android:textColor="@android:color/black"
             android:elegantTextHeight="false"

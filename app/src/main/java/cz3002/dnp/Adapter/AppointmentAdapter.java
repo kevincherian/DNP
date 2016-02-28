@@ -1,24 +1,23 @@
 package cz3002.dnp.Adapter;
 
-import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import cz3002.dnp.ChangeAppointmentFragment;
 import cz3002.dnp.Controller.AppointmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 import cz3002.dnp.Entity.Appointment;
+import cz3002.dnp.LoginFragment;
 import cz3002.dnp.MainActivity;
 import cz3002.dnp.R;
 
@@ -70,6 +69,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                             itemView.setBackgroundColor(Color.WHITE);
                             break;
 
+                        case MotionEvent.ACTION_UP:
+                            goToAnotherPage(item);
+                            break;
+
                         default:
                             itemView.setBackgroundColor(Color.parseColor("#FF329593"));
                             break;
@@ -81,16 +84,15 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         }
 
         private void goToAnotherPage(Appointment item) {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.getActivity(), dateSetListener, 2016, 4, 13);
-            datePickerDialog.show();
+            // Pass appointment to change_appointment fragment
+            Bundle bundle = new Bundle();
+            bundle.putString("appointmentId", String.format("%d", AppointmentCtrl.getInstance().getAppointments().indexOf(item)));
+            ChangeAppointmentFragment changeAppointmentFragment = new ChangeAppointmentFragment();
+            changeAppointmentFragment.setArguments(bundle);
+            // Go to change_appointment fragment
+            MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("appointmentlist").replace(R.id.main_container, changeAppointmentFragment).commit();
         }
 
-        private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Toast.makeText(MainActivity.getActivity(),String.format("%d/%d/%d", dayOfMonth, monthOfYear, year),Toast.LENGTH_LONG).show();
-            }
-        };
 
         public void setItem(Appointment item) {
             this.item = item;

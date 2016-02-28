@@ -16,6 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -55,7 +56,7 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submit();
+                submit(appointmentId);
             }
         });
 
@@ -77,7 +78,6 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
         DatePicker datePicker = (DatePicker) rootView.findViewById(R.id.dateField);
         int year = datePicker.getYear();
         int month = datePicker.getMonth();
-        month++;
         int date = datePicker.getDayOfMonth();
         // Get Time
         TimePicker timePicker = (TimePicker) rootView.findViewById(R.id.timeField);
@@ -117,57 +117,47 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
 
     }
 
-    private void submit() {
-//        // Validate usernames
-//        if (!validateUsername()) { // If fails
-//            Toast.makeText(getContext(), "Please check again the usernames you have entered!", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        // If usernames are correct, continue
-//        // Get all the info
-//        Date datetime = getDateTime(); // Get date and time
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        String datetimeString = format.format(datetime);
-//        EditText doctorUsername = (EditText) rootView.findViewById(R.id.doctorField);
-//        String doctorUsernameString = doctorUsername.getText().toString(); // Get doctor username
-//        User doctor = UserCtrl.getInstance().getUser(doctorUsernameString); // Get object doctor
-//        EditText patientUsername = (EditText) rootView.findViewById(R.id.doctorField);
-//        String patientUsernameString = patientUsername.getText().toString(); // Get patient username
-//        User patient = UserCtrl.getInstance().getUser(patientUsernameString); // Get object patient
-//        EditText info = (EditText) rootView.findViewById(R.id.infoField);
-//        String infoString = info.getText().toString(); // Get information
-//        String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
-//
-//        // Push all to server
-//        try {
-//            String query = String.format("insert into `appointment` (time, doctorID, patientID, info, status) " +
-//                    "values ('%s', '%d', '%d', '%s', '%s')", datetimeString, doctor.getId(), patient.getId(), infoString, statusString); // query to check username existence
-//            Document document = Jsoup.connect(SERVER + query).get();
-//            String queryJson = document.body().html();
-//            if (queryJson.equals("0")) { // Error happens
-//                Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
-//                return;
-//            }
-//            // Otherwise, if success, go back to Appointment List Fragment and notify user
-//            AppointmentCtrl.getInstance().retrieveAnAppointment(datetime, doctor, patient); // Put the appointment just created to internal database
-//            cancel(); // Stop current job, go back to Appointment List Fragment
-//            Toast.makeText(MainActivity.getActivity(), "Appointment submitted!", Toast.LENGTH_LONG).show();
-//
-//            // Notify other party
-//            // Insert code here
-//            // Insert code here
-//            // Insert code here
-//            // Insert code here
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    private void submit(int appointmentId) {
+        Appointment currentAppointment = AppointmentCtrl.getInstance().getAppointments().get(appointmentId);
+        Appointment editedAppointment = currentAppointment;
+
+        // Get all the info
+        Date datetime = getDateTime(); // Get date and time
+        editedAppointment.setTime(datetime);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String datetimeString = format.format(datetime);
+
+        String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
+        editedAppointment.setStatus(statusString);
+
+        // Push all to server
+        try {
+            String query = String.format("update `appointment` set time='%s', status='%s' where id=%d", datetimeString, statusString, currentAppointment.getId()); // query to check username existence
+            Document document = Jsoup.connect(SERVER + query).get();
+            String queryJson = document.body().html();
+            if (queryJson.equals("0")) { // Error happens
+                Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
+                return;
+            }
+            // Otherwise, if success, go back to Appointment List Fragment and notify user
+            AppointmentCtrl.getInstance().getAppointments().set(appointmentId, editedAppointment); // Put the appointment just created to internal database
+            cancel(); // Stop current job, go back to Appointment List Fragment
+            Toast.makeText(MainActivity.getActivity(), "Appointment updated!", Toast.LENGTH_LONG).show();
+
+            // TODO: code to notify partner
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void delete(int appointmentId) {
         Appointment currentAppointment = AppointmentCtrl.getInstance().getAppointments().get(appointmentId);
-        // Remove from server
+        Appointment editedAppointment = currentAppointment;
+
+        editedAppointment.setStatus("Canceled");
+        // Cancel from server
         try {
-            String query = String.format("delete from `appointment` where id=%d", currentAppointment.getId()); // query to delete an appointment
+            String query = String.format("update `appointment` set status='Canceled' where id=%d", currentAppointment.getId()); // query to delete an appointment
             Document document = Jsoup.connect(SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Error happens
@@ -178,8 +168,11 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        AppointmentCtrl.getInstance().getAppointments().remove(appointmentId);
-        cancel();
+        AppointmentCtrl.getInstance().getAppointments().set(appointmentId, editedAppointment); // Put the appointment just changed to internal database
+        cancel(); // Stop current job, go back to Appointment List Fragment
+        Toast.makeText(MainActivity.getActivity(), "Appointment canceled!", Toast.LENGTH_LONG).show();
+
+        // TODO: code to notify partner
     }
 
     private void cancel() {

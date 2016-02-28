@@ -106,8 +106,8 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:text="Log out"
-            android:background="@color/colorButton"
-            android:textColor="@android:color/black"
+            android:background="@color/colorWarning"
+            android:textColor="@android:color/white"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true" />
     </RelativeLayout>

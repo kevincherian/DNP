@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
+import cz3002.dnp.Controller.AppointmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 
 /**
@@ -55,6 +56,16 @@ public class HomepageFragment extends Fragment implements Constants {
                 toAppointmentList();
             }
         });
+
+        // Load appointments
+        Thread retrieveAppointments = new Thread(new Runnable() {
+            public void run() {
+                if (AppointmentCtrl.getInstance().getAppointments().size() < 1) {
+                    AppointmentCtrl.getInstance().retrieveAppointments();
+                }
+            }
+        });
+        retrieveAppointments.start();
 
         return rootView;
     }

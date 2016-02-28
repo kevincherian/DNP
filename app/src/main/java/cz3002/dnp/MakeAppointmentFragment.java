@@ -98,7 +98,6 @@ public class MakeAppointmentFragment extends Fragment implements Constants {
         DatePicker datePicker = (DatePicker) rootView.findViewById(R.id.dateField);
         int year = datePicker.getYear();
         int month = datePicker.getMonth();
-        month++;
         int date = datePicker.getDayOfMonth();
         // Get Time
         TimePicker timePicker = (TimePicker) rootView.findViewById(R.id.timeField);

@@ -32,13 +32,12 @@ public class AppointmentCtrl implements Constants {
     // Constructor
     private AppointmentCtrl(){
         appointments = new ArrayList<>();
-        retrieveAppointments();
     }
 
     private ArrayList<Appointment> appointments;
 
     // Get all appointments from server
-    private void retrieveAppointments(){
+    public void retrieveAppointments(){
         try {
             if (UserCtrl.getInstance().currentUser.getId() < 0) { return; } // If user has not logged in
             String query;

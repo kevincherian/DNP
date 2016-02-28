@@ -74,7 +74,7 @@
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Delete this Appointment"
+            android:text="Cancel this Appointment"
             android:background="@color/colorWarning"
             android:textColor="@android:color/white"            />
 

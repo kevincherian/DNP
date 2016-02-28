@@ -1,5 +1,7 @@
 package cz3002.dnp.Adapter;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,8 +81,16 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         }
 
         private void goToAnotherPage(Appointment item) {
-            Toast.makeText(MainActivity.getActivity(),item.toString(),Toast.LENGTH_LONG).show();
+            DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.getActivity(), dateSetListener, 2016, 4, 13);
+            datePickerDialog.show();
         }
+
+        private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Toast.makeText(MainActivity.getActivity(),String.format("%d/%d/%d", dayOfMonth, monthOfYear, year),Toast.LENGTH_LONG).show();
+            }
+        };
 
         public void setItem(Appointment item) {
             this.item = item;

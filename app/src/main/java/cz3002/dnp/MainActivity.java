@@ -9,7 +9,7 @@ import android.view.KeyEvent;
 import cz3002.dnp.Entity.User;
 
 
-public class MainActivity extends AppCompatActivity implements Constants {
+public class MainActivity extends AppCompatActivity {
     private static MainActivity activity;
     public static MainActivity getActivity(){
         return activity;

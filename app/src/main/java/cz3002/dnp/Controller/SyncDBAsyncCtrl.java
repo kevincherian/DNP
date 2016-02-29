@@ -21,7 +21,7 @@ import database.AppointmentDBHelper;
 /**
  * Created by hizac on 28/2/2016.
  */
-public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> implements Constants {
+public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
 
     private static SyncDBAsyncCtrl instance;
     public static SyncDBAsyncCtrl getInstance() {
@@ -51,7 +51,7 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> implements 
         //query the appointments belong to the current user
         try {
             String query = String.format("select * from `appointment` where doctorID=%d or patientID=%d", user_id, user_id);
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) {
                 Toast.makeText(MainActivity.getActivity(), "Currently have no appointment", Toast.LENGTH_LONG).show();

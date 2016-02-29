@@ -27,7 +27,7 @@ import cz3002.dnp.Entity.User;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class MakeAppointmentFragment extends Fragment implements Constants {
+public class MakeAppointmentFragment extends Fragment {
     ViewGroup rootView;
     @Nullable
     @Override
@@ -64,7 +64,7 @@ public class MakeAppointmentFragment extends Fragment implements Constants {
         // Query on server using that username
         try {
             String query = String.format("select `username` from `user` inner join `doctor` on user.id=doctor.userid where username='%s'", doctorUsernameString); // query to check username existence
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Username not existed
                 return false;
@@ -79,7 +79,7 @@ public class MakeAppointmentFragment extends Fragment implements Constants {
         // Query on server using that username
         try {
             String query = String.format("select `username` from `user` inner join `patient` on user.id=patient.userid where username='%s'", patientUsernameString); // query to check username existence
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Username not existed
                 return false;
@@ -154,7 +154,7 @@ public class MakeAppointmentFragment extends Fragment implements Constants {
         try {
             String query = String.format("insert into `appointment` (time, doctorID, patientID, info, status) " +
                     "values ('%s', '%d', '%d', '%s', '%s')", datetimeString, doctor.getId(), patient.getId(), infoString, statusString); // query to check username existence
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Error happens
                 Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();

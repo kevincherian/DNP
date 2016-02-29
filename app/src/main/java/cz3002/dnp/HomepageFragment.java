@@ -25,7 +25,7 @@ import cz3002.dnp.Controller.UserCtrl;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class HomepageFragment extends Fragment implements Constants {
+public class HomepageFragment extends Fragment {
     ViewGroup rootView;
     @Nullable
     @Override

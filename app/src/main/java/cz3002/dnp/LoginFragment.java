@@ -29,7 +29,7 @@ import database.AppointmentDBHelper;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class LoginFragment extends Fragment implements Constants {
+public class LoginFragment extends Fragment{
     ViewGroup rootView;
     @Nullable
     @Override
@@ -79,7 +79,7 @@ public class LoginFragment extends Fragment implements Constants {
         String passwordString = password.getText().toString();
         try {
             String query = String.format("select * from `user` where username='%s'", usernameString);
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) {
                 Toast.makeText(getContext(), "Wrong username!", Toast.LENGTH_LONG).show();

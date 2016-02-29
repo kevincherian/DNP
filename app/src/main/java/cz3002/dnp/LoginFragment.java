@@ -1,8 +1,5 @@
 package cz3002.dnp;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,8 +20,6 @@ import java.io.IOException;
 
 import cz3002.dnp.Controller.SyncDBAsyncCtrl;
 import cz3002.dnp.Controller.UserCtrl;
-import database.AppointmentContract;
-import database.AppointmentDBHelper;
 
 /**
  * Created by hizac on 23/2/2016.
@@ -88,13 +83,14 @@ public class LoginFragment extends Fragment{
                 JSONArray queryResultArr = new JSONArray(queryJson);
                 JSONObject queryResultObj = queryResultArr.getJSONObject(0);
                 String realPassword = queryResultObj.getString("password");
-//                int user_id = queryResultObj.getInt("id");
+                int user_id = queryResultObj.getInt("id");
                 // Query user type (doctor or patient)
 
                 if (realPassword.equals(passwordString)) {
                     // Create user object
                     UserCtrl.getInstance().currentUser = UserCtrl.getInstance().getUser(usernameString);
-//                    SyncDBAsyncCtrl.getInstance().execute(String.valueOf(user_id));
+                    SyncDBAsyncCtrl sync = new SyncDBAsyncCtrl(getContext());
+                    sync.execute(String.valueOf(user_id));
                     MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, new HomepageFragment()).commit();
                     Toast.makeText(MainActivity.getActivity(), String.format("Welcome %s!", UserCtrl.getInstance().currentUser.getUsername()), Toast.LENGTH_LONG).show();
                 } else {

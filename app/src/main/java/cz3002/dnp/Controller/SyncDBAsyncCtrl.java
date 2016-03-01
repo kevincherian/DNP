@@ -1,8 +1,8 @@
 package cz3002.dnp.Controller;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -12,74 +12,86 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.List;
 
 import cz3002.dnp.Constants;
-import cz3002.dnp.MainActivity;
-import database.AppointmentContract;
-import database.AppointmentDBHelper;
+import database.Appointment;
+import database.DatabaseHandler;
 
 /**
  * Created by hizac on 28/2/2016.
  */
-public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> implements Constants {
+public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
 
-    private static SyncDBAsyncCtrl instance;
-    public static SyncDBAsyncCtrl getInstance() {
-        if (instance == null) {
-            instance = new SyncDBAsyncCtrl();
-        }
-        return instance;
+    private Context context;
+    public SyncDBAsyncCtrl (Context context){
+        this.context = context;
     }
 
     @Override
     protected String doInBackground(String... params) {
-        syncDB(Integer.parseInt(params[0]));
+        syncDB(params[0]);
         return "Done syncing the local database";
     }
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(MainActivity.getActivity(), result, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
     }
 
-    private void syncDB(int user_id){
-        AppointmentDBHelper dbHelper = new AppointmentDBHelper(MainActivity.getActivity());
-        // Get the database. If it does not exist, this is where it will
-        // also be created. If it exist, drop the old table and create new one
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    private void syncDB(String user_id){
+        DatabaseHandler db = new DatabaseHandler(context);
+        db.deleteAllAppointments();
+
 
         //query the appointments belong to the current user
         try {
-            String query = String.format("select * from `appointment` where doctorID=%d or patientID=%d", user_id, user_id);
-            Document document = Jsoup.connect(SERVER + query).get();
+            String query = String.format("select * from `appointment` where doctorID=%s or patientID=%s", user_id, user_id);
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) {
-                Toast.makeText(MainActivity.getActivity(), "Currently have no appointment", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Currently have no appointment", Toast.LENGTH_LONG).show();
             } else {
                 JSONArray queryResultArr = new JSONArray(queryJson);
-                for (int i = 0; i < queryResultArr.length(); i++){
+                Log.d("Insert: ", "Inserting ..");
+
+                for (int i = 0; i < queryResultArr.length(); i++) {
                     JSONObject queryResultObj = queryResultArr.getJSONObject(i);
                     int appointment_id = queryResultObj.getInt("id");
-                    int patient_id = queryResultObj.getInt("patient_id");
-                    int doctor_id = queryResultObj.getInt("id");
+                    int patient_id = queryResultObj.getInt("patientID");
+                    int doctor_id = queryResultObj.getInt("doctorID");
+
+                    String query_patient = String.format("select `username` from `user` where id=%d", patient_id);
+                    String query_doctor = String.format("select `username` from `user` where id=%d", doctor_id);
+                    Document user1 = Jsoup.connect(Constants.SERVER + query_patient).get();
+                    String queryJson1 = user1.body().html();
+                    Document user2 = Jsoup.connect(Constants.SERVER + query_doctor).get();
+                    String queryJson2 = user2.body().html();
+                    JSONArray queryPatientArray = new JSONArray(queryJson1);
+                    JSONArray queryDoctorArray = new JSONArray(queryJson2);
+                    JSONObject queryPatient = queryPatientArray.getJSONObject(0);
+                    JSONObject queryDoctor = queryDoctorArray.getJSONObject(0);
+
+                    String patient = queryPatient.getString("username");
+                    String doctor = queryDoctor.getString("username");
+
                     String time = queryResultObj.getString("time");
                     String status = queryResultObj.getString("status");
                     String info = queryResultObj.getString("info");
 
-                    ContentValues values = new ContentValues();
-                    values.put(AppointmentContract.AppointmentEntry.COLUMN_NAME_APPOINTMENT_ID, appointment_id);
-                    values.put(AppointmentContract.AppointmentEntry.COLUMN_NAME_PATIENT_ID, patient_id);
-                    values.put(AppointmentContract.AppointmentEntry.COLUMN_NAME_DOCTOR_ID, doctor_id);
-                    values.put(AppointmentContract.AppointmentEntry.COLUMN_NAME_TIME, time);
-                    values.put(AppointmentContract.AppointmentEntry.COLUMN_NAME_STATUS, status);
-                    values.put(AppointmentContract.AppointmentEntry.COLUMN_NAME_INFO, info);
+                    db.addAppointment(appointment_id, patient, doctor, time, status, info);
+                }
+                Log.d("Reading: ", "Reading all appointments..");
+                List<Appointment> aps = db.getAllAppointments();
 
-                    // Insert the new row, returning the primary key value of the new row
-                    long newRowId;
-                    newRowId = db.insert(
-                            AppointmentContract.AppointmentEntry.TABLE_NAME,
-                            null,
-                            values);
+                for (Appointment ap : aps) {
+                    String log = "Id: "+ap.getId()+
+                            " ,Patient: " + ap.getPatient()+
+                            " ,Doctor: " + ap.getDoctor()+
+                            " ,Time: " + ap.getTime()+
+                            " ,Info: " + ap.getInfo()+
+                            " ,Status: " + ap.getStatus();
+                    Log.d("Appointment: ", log);
                 }
             }
         } catch (IOException e) {

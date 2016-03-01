@@ -26,7 +26,7 @@ import cz3002.dnp.Entity.Appointment;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class ChangeAppointmentFragment extends Fragment implements Constants {
+public class ChangeAppointmentFragment extends Fragment {
     ViewGroup rootView;
     @Nullable
     @Override
@@ -133,7 +133,7 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
         // Push all to server
         try {
             String query = String.format("update `appointment` set time='%s', status='%s' where id=%d", datetimeString, statusString, currentAppointment.getId()); // query to check username existence
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Error happens
                 Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
@@ -158,7 +158,7 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
         // Cancel from server
         try {
             String query = String.format("update `appointment` set status='Canceled' where id=%d", currentAppointment.getId()); // query to delete an appointment
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // Error happens
                 Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();

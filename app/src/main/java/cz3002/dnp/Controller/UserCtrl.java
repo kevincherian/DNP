@@ -14,7 +14,7 @@ import cz3002.dnp.Entity.User;
 /**
  * Created by hizac on 24/2/2016.
  */
-public class UserCtrl implements Constants {
+public class UserCtrl {
     private static UserCtrl instance;
 
     public static User currentUser = new User();
@@ -33,13 +33,13 @@ public class UserCtrl implements Constants {
         try {
             String query = String.format("select * from `user` inner join `patient` on user.id=patient.userid where id=%d", id);
             boolean isDoctor = false;
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // If try to get id from patient fails
                 // Try to get id from doctor
                 query = String.format("select * from `user` inner join `doctor` on user.id=doctor.userid where id=%d", id);
                 isDoctor = true;
-                document = Jsoup.connect(SERVER + query).get();
+                document = Jsoup.connect(Constants.SERVER + query).get();
                 queryJson = document.body().html();
                 if (queryJson.equals("0")) { // If still fails
                     return user;
@@ -77,13 +77,13 @@ public class UserCtrl implements Constants {
         try {
             String query = String.format("select * from `user` inner join `patient` on user.id=patient.userid where username='%s'", username);
             boolean isDoctor = false;
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // If try to get id from patient fails
                 // Try to get id from doctor
                 query = String.format("select * from `user` inner join `doctor` on user.id=doctor.userid where username='%s'", username);
                 isDoctor = true;
-                document = Jsoup.connect(SERVER + query).get();
+                document = Jsoup.connect(Constants.SERVER + query).get();
                 queryJson = document.body().html();
                 if (queryJson.equals("0")) { // If still fails
                     return user;

@@ -19,7 +19,7 @@ import cz3002.dnp.Entity.User;
 /**
  * Created by hizac on 26/2/2016.
  */
-public class AppointmentCtrl implements Constants {
+public class AppointmentCtrl {
     
     private static AppointmentCtrl instance;
     public static AppointmentCtrl getInstance() {
@@ -46,7 +46,7 @@ public class AppointmentCtrl implements Constants {
             } else {
                 query = String.format("select * from `appointment` where patientID=%d", UserCtrl.getInstance().currentUser.getId());
             }
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // If try to retrieve info fails
                 return;
@@ -93,7 +93,7 @@ public class AppointmentCtrl implements Constants {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String timeString = format.format(time);
             String query = String.format("select * from `appointment` where doctorID=%d and patientID=%d and time='%s'", doctor.getId(), patient.getId(), timeString);
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) { // If try to retrieve info fails
                 return null;

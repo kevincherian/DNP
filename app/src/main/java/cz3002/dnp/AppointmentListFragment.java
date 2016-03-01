@@ -15,7 +15,7 @@ import cz3002.dnp.Adapter.AppointmentAdapter;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class AppointmentListFragment extends Fragment implements Constants {
+public class AppointmentListFragment extends Fragment {
     ViewGroup rootView;
     @Nullable
     @Override

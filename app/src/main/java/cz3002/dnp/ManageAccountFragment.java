@@ -21,7 +21,7 @@ import cz3002.dnp.Controller.UserCtrl;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class ManageAccountFragment extends Fragment implements Constants {
+public class ManageAccountFragment extends Fragment{
     ViewGroup rootView;
     @Nullable
     @Override
@@ -105,7 +105,7 @@ public class ManageAccountFragment extends Fragment implements Constants {
         // Update to server
         try {
             String query = String.format("update `user` set password='%s', email='%s', fullname='%s' where id=%d", passwordString, emailString, fullnameString, id);
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
 
             // Check if task fails

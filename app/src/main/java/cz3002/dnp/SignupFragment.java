@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * Created by hizac on 23/2/2016.
  */
-public class SignupFragment extends Fragment implements Constants {
+public class SignupFragment extends Fragment {
     ViewGroup rootView;
     @Nullable
     @Override
@@ -89,27 +89,27 @@ public class SignupFragment extends Fragment implements Constants {
          ===================================================*/
         try {
             String query = String.format("select `username` from `user` where username='%s'", usernameString); // query to check username existence
-            Document document = Jsoup.connect(SERVER + query).get();
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (!queryJson.equals("0")) { // Username existed
                 Toast.makeText(getContext(), String.format("The username %s is existed.\nPlease use another one!", usernameString), Toast.LENGTH_LONG).show();
             } else { // Possible to register
                 query = String.format("insert into `user` (username, password, email, fullname) values ('%s', '%s', '%s', '%s')", usernameString, passwordString, emailString, fullnameString);
-                document = Jsoup.connect(SERVER + query).get();
+                document = Jsoup.connect(Constants.SERVER + query).get();
                 queryJson = document.body().html();
                 if (queryJson.equals("0")) { // Error happens
                     Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
                 } else { // Register user finished, start to register Type
                     // Query for the userID which has just been created
                     query = String.format("select `id` from `user` where username='%s'", usernameString);
-                    document = Jsoup.connect(SERVER + query).get();
+                    document = Jsoup.connect(Constants.SERVER + query).get();
                     queryJson = document.body().html();
                     JSONArray queryResultArr = new JSONArray(queryJson);
                     JSONObject queryResultObj = queryResultArr.getJSONObject(0);
                     String userid = queryResultObj.getString("id"); // This is the ID we want to get
                     // Start inserting that ID to the table of the corresponding type
                     query = String.format("insert into `%s` (userid) values ('%s')", selectedTypeString, userid);
-                    document = Jsoup.connect(SERVER + query).get();
+                    document = Jsoup.connect(Constants.SERVER + query).get();
                     queryJson = document.body().html();
                     // Done inserting ID
                     if (queryJson.equals("0")) { // Error happens

@@ -81,8 +81,8 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
         int date = datePicker.getDayOfMonth();
         // Get Time
         TimePicker timePicker = (TimePicker) rootView.findViewById(R.id.timeField);
-        int hour = timePicker.getHour();
-        int minute = timePicker.getMinute();
+        int hour = timePicker.getCurrentHour();
+        int minute = timePicker.getCurrentMinute();
         // Set Date and Time to datetime
         Calendar cal = Calendar.getInstance();
         cal.set(year,month,date,hour,minute);
@@ -112,8 +112,8 @@ public class ChangeAppointmentFragment extends Fragment implements Constants {
         DatePicker datePicker = (DatePicker) rootView.findViewById(R.id.dateField);
         datePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         TimePicker timePicker = (TimePicker) rootView.findViewById(R.id.timeField);
-        timePicker.setHour(cal.get(Calendar.HOUR));
-        timePicker.setMinute(cal.get(Calendar.MINUTE));
+        timePicker.setCurrentHour(cal.get(Calendar.HOUR));
+        timePicker.setCurrentMinute(cal.get(Calendar.MINUTE));
 
     }
 

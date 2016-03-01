@@ -15,6 +15,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
+import cz3002.dnp.Controller.AppointmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 
 /**
@@ -82,6 +83,8 @@ public class ManageAccountFragment extends Fragment implements Constants {
         loginFragment.setArguments(bundle);
         // Erase user information
         UserCtrl.getInstance().currentUser = UserCtrl.getInstance().createUser(-1, null, null, null, null, false);
+        // Delete all the appointments
+        AppointmentCtrl.getInstance().getAppointments().clear();
         cancel();
         MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container, loginFragment).commit();
         Toast.makeText(MainActivity.getActivity(), "You have logged out!", Toast.LENGTH_LONG).show();

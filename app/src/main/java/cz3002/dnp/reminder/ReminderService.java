@@ -6,11 +6,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.util.List;
+import java.util.Random;
 
 import cz3002.dnp.R;
+import cz3002.dnp.Reminder;
 import database.Appointment;
 import database.DatabaseHandler;
 import database.Treatment;
@@ -27,11 +30,6 @@ public class ReminderService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.i("Reminder Service", "Service running");
-
-        //empty pending intent
-        PendingIntent reminderPI =
-                PendingIntent.getActivity(
-                        getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
         DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 
@@ -55,14 +53,30 @@ public class ReminderService extends IntentService {
             sb.append(tr.getDoctor() + " and " + tr.getPatient() + " has treatment " + tr.getText() + " today.");
         }
 
-
+        Intent notifIntent = new Intent(getApplicationContext(), Reminder.class);
         String notificationText = sb.toString();
+
+        // set the fragment to the desired ReminderFragment
+        notifIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Bundle bundle = new Bundle();
+        bundle.putString("fragment", "ReminderFragment");
+        bundle.putString("reminder", notificationText);
+
+        notifIntent.putExtras(bundle);
+        PendingIntent notifPendingIntent =
+                PendingIntent.getActivity(
+                        getApplicationContext(),
+                        new Random().nextInt(),
+                        notifIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
         notif = new Notification.Builder(getApplicationContext())
                 .setContentTitle("Today's reminder")
                 .setContentText(notificationText)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(reminderPI)
+                .setContentIntent(notifPendingIntent)
                 .setStyle(new Notification.BigTextStyle().bigText(notificationText))
                 .build();
 

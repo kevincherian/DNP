@@ -1,6 +1,9 @@
 package cz3002.dnp.Controller;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,9 +15,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 import cz3002.dnp.Constants;
+import cz3002.dnp.MainActivity;
+import cz3002.dnp.reminder.ReminderAlarmReceiver;
 import database.Appointment;
 import database.DatabaseHandler;
 import database.Treatment;
@@ -37,6 +43,7 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
+        scheduleAlarm();
         Toast.makeText(context, result, Toast.LENGTH_LONG).show();
     }
 
@@ -163,5 +170,29 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+    // Setup a recurring alarm at 6am everyday
+    public void scheduleAlarm() {
+        Log.d("scheduleAlarm", "schedule Alarm");
+        // Construct an intent that will execute the ReminderAlarmReceiver
+        Intent intent = new Intent(MainActivity.getActivity().getApplicationContext(), ReminderAlarmReceiver.class);
+        // Create a PendingIntent to be triggered when the alarm goes off
+        final PendingIntent pIntent = PendingIntent.getBroadcast(MainActivity.getActivity().getApplicationContext(),
+                ReminderAlarmReceiver.REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Setup periodic alarm every 6am
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 6); // For 6AM, Change to current time to test
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0); // to be more precise
+
+        // create an alarm that will first go of at the set calendar time
+        // and keep repeating after 1 day
+        AlarmManager alarm = (AlarmManager) MainActivity.getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pIntent);
+        //change to INTERVAL_FIFTEEN_MINUTE to test
     }
 }

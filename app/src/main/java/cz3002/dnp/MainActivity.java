@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import java.util.Calendar;
 
 import cz3002.dnp.reminder.ReminderAlarmReceiver;
-import cz3002.dnp.reminder.ReminderService;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,16 +54,17 @@ public class MainActivity extends AppCompatActivity {
 
     // Setup a recurring alarm at 6am everyday
     public void scheduleAlarm() {
+        Log.d("scheduleAlarm", "schedule Alarm");
         // Construct an intent that will execute the ReminderAlarmReceiver
-        Intent intent = new Intent(getApplicationContext(), ReminderService.class);
+        Intent intent = new Intent(getApplicationContext(), ReminderAlarmReceiver.class);
         // Create a PendingIntent to be triggered when the alarm goes off
         final PendingIntent pIntent = PendingIntent.getBroadcast(this,
                 ReminderAlarmReceiver.REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // Setup periodic alarm every 6am
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 6); // For 6AM
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 20); // For 6AM
+        calendar.set(Calendar.MINUTE, 45);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0); // to be more precise
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pIntent);
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pIntent);
     }
 
 }

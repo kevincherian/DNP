@@ -52,5 +52,6 @@
     <string name="manage_account_text">Manage Account</string>
     <string name="communication_text">Communication</string>
     <string name="appointment_info_hint">More information</string>
+    <string name="title_activity_reminder">Reminder</string>
 
 </resources>

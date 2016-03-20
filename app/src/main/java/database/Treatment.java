@@ -3,18 +3,18 @@ package database;
 
 public class Treatment {
     int id;
-    String time;
-    int duration;
+    String startdate;
+    String enddate;
     String doctor;
     String patient;
     String text;
 
     public Treatment(int id, String patient,
-                       String doctor, String time, int duration,
+                       String doctor, String startdate, String enddate,
                        String text) {
         this.id = id;
-        this.time = time;
-        this.duration = duration;
+        this.startdate = startdate;
+        this.enddate = enddate;
         this.doctor = doctor;
         this.patient = patient;
         this.text = text;
@@ -25,8 +25,8 @@ public class Treatment {
     public int getId() {
         return id;
     }
-    public String getTime() {
-        return time;
+    public String getStartdate() {
+        return startdate;
     }
     public String getDoctor() {
         return doctor;
@@ -38,8 +38,8 @@ public class Treatment {
         return text;
     }
 
-    public int getDuration(){
-        return duration;
+    public String getEnddate(){
+        return enddate;
     }
 
     @Override

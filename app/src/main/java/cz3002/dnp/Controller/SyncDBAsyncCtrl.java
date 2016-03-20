@@ -132,15 +132,16 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
                     String patient = queryPatient.getString("username");
                     String doctor = queryDoctor.getString("username");
 
-                    String time = queryResultObj.getString("time");
+                    String startdate = queryResultObj.getString("startdate");
+                    String enddate = queryResultObj.getString("enddate");
+
                     String text = queryResultObj.getString("text");
-                    int duration = queryResultObj.getInt("duration");
-                    db.addTreatment(treatment_id, patient, doctor, time, duration, text);
+                    db.addTreatment(treatment_id, patient, doctor, startdate, enddate, text);
                     String log = "Id: "+treatment_id+
                             " ,Patient: " + patient+
                             " ,Doctor: " + doctor+
-                            " ,Time: " + time+
-                            " ,Duration: " + duration+
+                            " ,Start Date: " + startdate+
+                            " ,End Date: " + enddate+
                             " ,Text: " + text;
                     Log.d("Inserted: ", log);
                 }
@@ -151,8 +152,8 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
                     String log = "Id: "+tr.getId()+
                             " ,Patient: " + tr.getPatient()+
                             " ,Doctor: " + tr.getDoctor()+
-                            " ,Time: " + tr.getTime()+
-                            " ,Duration: " + tr.getDuration()+
+                            " ,Start Date: " + tr.getStartdate()+
+                            " ,End Date: " + tr.getEnddate()+
                             " ,Text: " + tr.getText();
                     Log.d("Treatment: ", log);
                 }

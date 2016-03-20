@@ -36,12 +36,13 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     private static final String COLUMN_NAME_TREATMENT_ID = "treament_id"; //online database id of appointment
     private static final String COLUMN_NAME_TREATMENT_PATIENT = "patient";
     private static final String COLUMN_NAME_TREATMENT_DOCTOR = "doctor";
-    private static final String COLUMN_NAME_TREATMENT_TIME = "time";
-    private static final String COLUMN_NAME_TREATMENT_DURATION = "duration";
+    private static final String COLUMN_NAME_TREATMENT_STARTDATE = "startdate";
+    private static final String COLUMN_NAME_TREATMENT_ENDDATE = "enddate";
     private static final String COLUMN_NAME_TREATMENT_TEXT = "text";
 
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String DATETIME_TYPE = " DATETIME";
+    private static final String DATE_TYPE = " DATE";
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
 
@@ -66,8 +67,8 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                     + COLUMN_NAME_TREATMENT_ID + INTEGER_TYPE + COMMA_SEP
                     + COLUMN_NAME_TREATMENT_PATIENT + TEXT_TYPE + COMMA_SEP
                     + COLUMN_NAME_TREATMENT_DOCTOR + TEXT_TYPE + COMMA_SEP
-                    + COLUMN_NAME_TREATMENT_TIME + DATETIME_TYPE + COMMA_SEP
-                    + COLUMN_NAME_TREATMENT_DURATION + INTEGER_TYPE + COMMA_SEP
+                    + COLUMN_NAME_TREATMENT_STARTDATE + DATE_TYPE + COMMA_SEP
+                    + COLUMN_NAME_TREATMENT_ENDDATE + DATE_TYPE + COMMA_SEP
                     + COLUMN_NAME_TREATMENT_TEXT + TEXT_TYPE +
                     " )";
 
@@ -119,16 +120,16 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 
     // Adding new treatment
     public void addTreatment(int id, String patient, String doctor,
-                               String time, int duration, String text) {
+                               String startdate, String enddate, String text) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_TREATMENT_ID, id);
         values.put(COLUMN_NAME_TREATMENT_PATIENT, patient);
         values.put(COLUMN_NAME_TREATMENT_DOCTOR, doctor);
-        values.put(COLUMN_NAME_TREATMENT_TIME, time);
+        values.put(COLUMN_NAME_TREATMENT_STARTDATE, startdate);
         values.put(COLUMN_NAME_TREATMENT_TEXT, text);
-        values.put(COLUMN_NAME_TREATMENT_DURATION, duration);
+        values.put(COLUMN_NAME_TREATMENT_ENDDATE, enddate);
 
         // Inserting Row
         db.insert(TABLE_TREATMENT, null, values);
@@ -169,8 +170,8 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                         COLUMN_NAME_TREATMENT_ID,
                         COLUMN_NAME_TREATMENT_PATIENT,
                         COLUMN_NAME_TREATMENT_DOCTOR,
-                        COLUMN_NAME_TREATMENT_TIME,
-                        COLUMN_NAME_TREATMENT_DURATION,
+                        COLUMN_NAME_TREATMENT_STARTDATE,
+                        COLUMN_NAME_TREATMENT_ENDDATE,
                         COLUMN_NAME_TREATMENT_TEXT
                 }, COLUMN_NAME_TREATMENT_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
@@ -182,7 +183,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                 cursor.getString(2),
                 cursor.getString(3),
                 cursor.getString(4),
-                Integer.parseInt(cursor.getString(5)),
+                cursor.getString(5),
                 cursor.getString(6));
         return treatment;
     }
@@ -192,6 +193,34 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         List<Appointment> appointmentList = new ArrayList<Appointment>();
         // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE_APPOINTMENTS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Appointment ap = new Appointment(
+                        Integer.parseInt(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6));
+                // Adding contact to list
+                appointmentList.add(ap);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return appointmentList;
+    }
+
+    // Getting All Appointment on current date
+    public List<Appointment> getAllAppointmentsToday() {
+        List<Appointment> appointmentList = new ArrayList<Appointment>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_APPOINTMENTS + " WHERE date(time) = date('now')";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -232,7 +261,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
-                        Integer.parseInt(cursor.getString(5)),
+                        cursor.getString(5),
                         cursor.getString(6));
                 // Adding contact to list
                 treatmentList.add(treatment);
@@ -243,6 +272,34 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         return treatmentList;
     }
 
+    // Getting All Treatments today
+    public List<Treatment> getAllTreatmentsToday() {
+        List<Treatment> treatmentList = new ArrayList<Treatment>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_TREATMENT + " WHERE date(startdate) <= date('now')"
+                + " AND date(enddate) >= date('now')";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Treatment treatment = new Treatment(
+                        Integer.parseInt(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6));
+                // Adding contact to list
+                treatmentList.add(treatment);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return treatmentList;
+    }
 
     // Deleting all appointments
     public void deleteAllAppointments() {

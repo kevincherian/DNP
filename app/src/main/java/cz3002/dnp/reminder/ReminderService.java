@@ -8,7 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.List;
+
 import cz3002.dnp.R;
+import database.Appointment;
+import database.DatabaseHandler;
+import database.Treatment;
 
 public class ReminderService extends IntentService {
     private static final int REMINDER_NOTIFICATION_ID = 777;
@@ -28,22 +33,28 @@ public class ReminderService extends IntentService {
                 PendingIntent.getActivity(
                         getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
+        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+
 
         //generate notification
         StringBuilder sb = new StringBuilder();
+
+        List<Appointment> aps = db.getAllAppointmentsToday();
         sb.append("Appointments: ");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("\tFirst appointment");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("\tSecond appointment");
+        for (Appointment ap : aps){
+            sb.append(System.getProperty("line.separator"));
+            sb.append(ap.getDoctor() + " and " + ap.getPatient() + " has an appointment at " + ap.getTime()+ ".");
+        }
 
         sb.append(System.getProperty("line.separator"));
 
+        List<Treatment> trs = db.getAllTreatmentsToday();
         sb.append("Treatments: ");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("\tFirst treatment");
-        sb.append(System.getProperty("line.separator"));
-        sb.append("\tSecond treatment");
+        for (Treatment tr : trs) {
+            sb.append(System.getProperty("line.separator"));
+            sb.append(tr.getDoctor() + " and " + tr.getPatient() + " has treatment " + tr.getText() + " today.");
+        }
+
 
         String notificationText = sb.toString();
         notif = new Notification.Builder(getApplicationContext())

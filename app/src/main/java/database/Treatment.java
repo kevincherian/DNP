@@ -4,15 +4,17 @@ package database;
 public class Treatment {
     int id;
     String time;
+    int duration;
     String doctor;
     String patient;
     String text;
 
     public Treatment(int id, String patient,
-                       String doctor, String time,
+                       String doctor, String time, int duration,
                        String text) {
         this.id = id;
         this.time = time;
+        this.duration = duration;
         this.doctor = doctor;
         this.patient = patient;
         this.text = text;
@@ -36,9 +38,13 @@ public class Treatment {
         return text;
     }
 
+    public int getDuration(){
+        return duration;
+    }
+
     @Override
     public String toString() {
-        return "Remember to " + text + " at " + time;
+        return "Remember to " + text + " today.";
     }
 }
 

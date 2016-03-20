@@ -37,6 +37,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     private static final String COLUMN_NAME_TREATMENT_PATIENT = "patient";
     private static final String COLUMN_NAME_TREATMENT_DOCTOR = "doctor";
     private static final String COLUMN_NAME_TREATMENT_TIME = "time";
+    private static final String COLUMN_NAME_TREATMENT_DURATION = "duration";
     private static final String COLUMN_NAME_TREATMENT_TEXT = "text";
 
     private static final String INTEGER_TYPE = " INTEGER";
@@ -66,6 +67,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                     + COLUMN_NAME_TREATMENT_PATIENT + TEXT_TYPE + COMMA_SEP
                     + COLUMN_NAME_TREATMENT_DOCTOR + TEXT_TYPE + COMMA_SEP
                     + COLUMN_NAME_TREATMENT_TIME + DATETIME_TYPE + COMMA_SEP
+                    + COLUMN_NAME_TREATMENT_DURATION + INTEGER_TYPE + COMMA_SEP
                     + COLUMN_NAME_TREATMENT_TEXT + TEXT_TYPE +
                     " )";
 
@@ -117,7 +119,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 
     // Adding new treatment
     public void addTreatment(int id, String patient, String doctor,
-                               String time, String text) {
+                               String time, int duration, String text) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -126,6 +128,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         values.put(COLUMN_NAME_TREATMENT_DOCTOR, doctor);
         values.put(COLUMN_NAME_TREATMENT_TIME, time);
         values.put(COLUMN_NAME_TREATMENT_TEXT, text);
+        values.put(COLUMN_NAME_TREATMENT_DURATION, duration);
 
         // Inserting Row
         db.insert(TABLE_TREATMENT, null, values);
@@ -167,6 +170,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                         COLUMN_NAME_TREATMENT_PATIENT,
                         COLUMN_NAME_TREATMENT_DOCTOR,
                         COLUMN_NAME_TREATMENT_TIME,
+                        COLUMN_NAME_TREATMENT_DURATION,
                         COLUMN_NAME_TREATMENT_TEXT
                 }, COLUMN_NAME_TREATMENT_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
@@ -178,7 +182,8 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                 cursor.getString(2),
                 cursor.getString(3),
                 cursor.getString(4),
-                cursor.getString(5));
+                Integer.parseInt(cursor.getString(5)),
+                cursor.getString(6));
         return treatment;
     }
 
@@ -227,7 +232,8 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
-                        cursor.getString(5));
+                        Integer.parseInt(cursor.getString(5)),
+                        cursor.getString(6));
                 // Adding contact to list
                 treatmentList.add(treatment);
             } while (cursor.moveToNext());

@@ -134,12 +134,13 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
 
                     String time = queryResultObj.getString("time");
                     String text = queryResultObj.getString("text");
-
-                    db.addTreatment(treatment_id, patient, doctor, time, text);
+                    int duration = queryResultObj.getInt("duration");
+                    db.addTreatment(treatment_id, patient, doctor, time, duration, text);
                     String log = "Id: "+treatment_id+
                             " ,Patient: " + patient+
                             " ,Doctor: " + doctor+
                             " ,Time: " + time+
+                            " ,Duration: " + duration+
                             " ,Text: " + text;
                     Log.d("Inserted: ", log);
                 }
@@ -151,6 +152,7 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
                             " ,Patient: " + tr.getPatient()+
                             " ,Doctor: " + tr.getDoctor()+
                             " ,Time: " + tr.getTime()+
+                            " ,Duration: " + tr.getDuration()+
                             " ,Text: " + tr.getText();
                     Log.d("Treatment: ", log);
                 }

@@ -1,8 +1,10 @@
 *.iml
 .gradle
 /local.properties
-/.idea/workspace.xml
+/.idea/workspace.xm
 /.idea/libraries
 .DS_Store
 /build
 /captures
+/app/build
+/app/src/main/gen

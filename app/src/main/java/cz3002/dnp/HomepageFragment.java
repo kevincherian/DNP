@@ -20,6 +20,7 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 
 import cz3002.dnp.Controller.AppointmentCtrl;
+import cz3002.dnp.Controller.TreatmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 
 /**
@@ -57,6 +58,15 @@ public class HomepageFragment extends Fragment {
             }
         });
 
+        // Get Treatment Button
+        Button treatmentListBtn = (Button) rootView.findViewById(R.id.viewTreatmentButton);
+        treatmentListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toTreatmentList();
+            }
+        });
+
         // Load appointments
         Thread retrieveAppointments = new Thread(new Runnable() {
             public void run() {
@@ -67,7 +77,21 @@ public class HomepageFragment extends Fragment {
         });
         retrieveAppointments.start();
 
+        // Load treatments
+        Thread retrieveTreatments = new Thread(new Runnable() {
+            public void run() {
+                if (TreatmentCtrl.getInstance().getTreatments().size() < 1) {
+                    TreatmentCtrl.getInstance().retrieveTreatments();
+                }
+            }
+        });
+        retrieveTreatments.start();
+
         return rootView;
+    }
+
+    private void toTreatmentList() {
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new TreatmentListFragment()).commit();
     }
 
 

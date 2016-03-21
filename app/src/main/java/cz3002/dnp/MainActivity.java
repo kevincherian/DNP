@@ -6,8 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 
-import cz3002.dnp.Entity.User;
-
 
 public class MainActivity extends AppCompatActivity {
     private static MainActivity activity;
@@ -27,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+
         MainActivity.getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_container,new LoginFragment()).commit();
     }
 
@@ -43,5 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         MainActivity.getActivity().getSupportFragmentManager().popBackStack();
     }
+
+
 
 }

@@ -58,7 +58,7 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
             Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) {
-                Toast.makeText(context, "Currently have no appointment", Toast.LENGTH_LONG).show();
+                Log.d("After toast", "After toast");
             } else {
                 JSONArray queryResultArr = new JSONArray(queryJson);
                 Log.d("Insert: ", "Inserting ..");
@@ -114,7 +114,7 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
             Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
             if (queryJson.equals("0")) {
-                Toast.makeText(context, "Currently have no treatment", Toast.LENGTH_LONG).show();
+                Log.d("After toast", "After toast 2");
             } else {
                 JSONArray queryResultArr = new JSONArray(queryJson);
                 Log.d("Insert: ", "Inserting ..");

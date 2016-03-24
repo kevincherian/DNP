@@ -31,7 +31,7 @@
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:id="@+id/treatment_list"
-        android:layout_below="@+id/newTreatmentButton"
+        android:layout_below="@+id/treatmentList"
         android:layout_height="match_parent"
         android:scrollIndicators="right" />
 

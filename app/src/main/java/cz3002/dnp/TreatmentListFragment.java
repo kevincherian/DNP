@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import cz3002.dnp.Adapter.TreatmentAdapter;
+import cz3002.dnp.Controller.UserCtrl;
 
 /**
  * Created by hizac on 23/2/2016.
@@ -24,9 +25,24 @@ public class TreatmentListFragment extends Fragment {
 
         RecyclerView list = (RecyclerView)rootView.findViewById(R.id.treatment_list);
         list.setAdapter(new TreatmentAdapter());
-        list.setLayoutManager(new LinearLayoutManager(MainActivity.getActivity().getApplicationContext(),LinearLayoutManager.VERTICAL,false));
+        list.setLayoutManager(new LinearLayoutManager(MainActivity.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
+        Button newTreatmentBtn = (Button) rootView.findViewById(R.id.newTreatmentButton);
+        newTreatmentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newTreatment();
+            }
+        });
+        if (UserCtrl.currentUser.isDoctor() == false) {
+            newTreatmentBtn.setVisibility(View.GONE);
+        }
 
         return rootView;
+    }
+
+    private void newTreatment() {
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("treatmentlist").replace(R.id.main_container, new MakeTreatmentFragment()).commit();
     }
 
 }

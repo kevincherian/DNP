@@ -47,11 +47,14 @@
     <string name="appointment_list_text">Appointments</string>
     <string name="appointment_text">Appointments</string>
     <string name="make_appointment_text">Make an Appointment</string>
+    <string name="make_treatment_text">Create new treatment progress</string>
+    <string name="update_progress_text">Update treatment progress</string>
     <string name="change_appointment_text">Select a new Date/Time</string>
     <string name="new_appointment_text">New</string>
     <string name="manage_account_text">Manage Account</string>
     <string name="communication_text">Communication</string>
     <string name="appointment_info_hint">More information</string>
+    <string name="treatment_info_hint">More detail</string>
     <string name="title_activity_reminder">Reminder</string>
 
 </resources>

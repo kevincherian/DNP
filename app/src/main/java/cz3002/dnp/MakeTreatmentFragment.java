@@ -16,23 +16,23 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 
-import cz3002.dnp.Controller.AppointmentCtrl;
+import cz3002.dnp.Controller.TreatmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 import cz3002.dnp.Entity.User;
 
 /**
  * Created by hizac on 23/2/2016.
  */
-public class MakeAppointmentFragment extends Fragment {
+public class MakeTreatmentFragment extends Fragment {
     ViewGroup rootView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = (ViewGroup) inflater.inflate(R.layout.activity_make_appointment, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.activity_make_treatment, container, false);
 
         autoFillInCurrentUser();
 
@@ -92,20 +92,15 @@ public class MakeAppointmentFragment extends Fragment {
     }
 
     // Return date and time from DatePicker and TimePicker
-    private Date getDateTime() {
+    private Date getDateTime(DatePicker datePicker) {
         Date datetime = new Date();
-        // Get Date
-        DatePicker datePicker = (DatePicker) rootView.findViewById(R.id.dateField);
+
         int year = datePicker.getYear();
         int month = datePicker.getMonth();
         int date = datePicker.getDayOfMonth();
-        // Get Time
-        TimePicker timePicker = (TimePicker) rootView.findViewById(R.id.timeField);
-        int hour = timePicker.getHour();
-        int minute = timePicker.getMinute();
-        // Set Date and Time to datetime
+        // Set Date to datetime
         Calendar cal = Calendar.getInstance();
-        cal.set(year,month,date,hour,minute);
+        cal.set(year,month,date);
         datetime.setTime(cal.getTimeInMillis());
 //        // Print out the time in a proper format
 //        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -137,9 +132,13 @@ public class MakeAppointmentFragment extends Fragment {
         }
         // If usernames are correct, continue
         // Get all the info
-        Date datetime = getDateTime(); // Get date and time
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String datetimeString = format.format(datetime);
+        DatePicker startdatePicker = (DatePicker) rootView.findViewById(R.id.startdateField);
+        DatePicker enddatePicker = (DatePicker) rootView.findViewById(R.id.enddateField);
+        Date startdate = getDateTime(startdatePicker);
+        Date enddate = getDateTime(enddatePicker);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String startdateString = format.format(startdate);
+        String enddateString = format.format(enddate);
         EditText doctorUsername = (EditText) rootView.findViewById(R.id.doctorField);
         String doctorUsernameString = doctorUsername.getText().toString(); // Get doctor username
         User doctor = UserCtrl.getInstance().getUser(doctorUsernameString); // Get object doctor
@@ -148,23 +147,23 @@ public class MakeAppointmentFragment extends Fragment {
         User patient = UserCtrl.getInstance().getUser(patientUsernameString); // Get object patient
         EditText info = (EditText) rootView.findViewById(R.id.infoField);
         String infoString = info.getText().toString(); // Get information
-        String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
 
         // Push all to server
         try {
-            String query = String.format("insert into `appointment` (time, doctorID, patientID, info, status) " +
-                    "values ('%s', '%d', '%d', '%s', '%s')", datetimeString, doctor.getId(), patient.getId(), infoString, statusString); // query to check username existence
+            String query = String.format("insert into `treatment` (startdate, enddate, doctorID, patientID, text) " +
+                    "values ('%s', '%s', '%d', '%d', '%s')", startdateString, enddateString, doctor.getId(), patient.getId(), infoString); // query to check username existence
             query = query.replace("\n","%0A");
             Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
+            System.out.println(queryJson);
             if (queryJson.equals("0")) { // Error happens
                 Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
                 return;
             }
-            // Otherwise, if success, go back to Appointment List Fragment and notify user
-            AppointmentCtrl.getInstance().retrieveAnAppointment(datetime, doctor, patient); // Put the appointment just created to internal database
-            cancel(); // Stop current job, go back to Appointment List Fragment
-            Toast.makeText(MainActivity.getActivity(), "Appointment submitted!", Toast.LENGTH_LONG).show();
+            // Otherwise, if success, go back to Treatment List Fragment and notify user
+            TreatmentCtrl.getInstance().retrieveAnTreatment(startdate, enddate, doctor, patient); // Put the treatment just created to internal database
+            cancel(); // Stop current job, go back to Treatment List Fragment
+            Toast.makeText(MainActivity.getActivity(), "Treatment submitted!", Toast.LENGTH_LONG).show();
 
             // Notify other party
             // Insert code here

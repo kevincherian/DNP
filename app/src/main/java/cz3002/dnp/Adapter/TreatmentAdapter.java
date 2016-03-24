@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import cz3002.dnp.ChangeTreatmentFragment;
 import cz3002.dnp.Controller.TreatmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 import cz3002.dnp.Entity.Treatment;
@@ -54,7 +55,7 @@ public class TreatmentAdapter extends RecyclerView.Adapter<TreatmentAdapter.Trea
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    goToAnotherPage(item);
+                    goToAnotherPage(item);
                 }
             });
             itemView.setOnTouchListener(new View.OnTouchListener() {
@@ -67,7 +68,7 @@ public class TreatmentAdapter extends RecyclerView.Adapter<TreatmentAdapter.Trea
                             break;
 
                         case MotionEvent.ACTION_UP:
-//                            goToAnotherPage(item);
+                            goToAnotherPage(item);
                             break;
 
                         default:
@@ -80,15 +81,15 @@ public class TreatmentAdapter extends RecyclerView.Adapter<TreatmentAdapter.Trea
             });
         }
 
-//        private void goToAnotherPage(Treatment item) {
-//            // Pass treatment to change_treatment fragment
-//            Bundle bundle = new Bundle();
-//            bundle.putString("treatmentId", String.format("%d", TreatmentCtrl.getInstance().getTreatments().indexOf(item)));
-//            ChangeTreatmentFragment changeTreatmentFragment = new ChangeTreatmentFragment();
-//            changeTreatmentFragment.setArguments(bundle);
-//            // Go to change_treatment fragment
-//            MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("treatmentlist").replace(R.id.main_container, changeTreatmentFragment).commit();
-//        }
+        private void goToAnotherPage(Treatment item) {
+            // Pass treatment to change_treatment fragment
+            Bundle bundle = new Bundle();
+            bundle.putString("treatmentId", String.format("%d", TreatmentCtrl.getInstance().getTreatments().indexOf(item)));
+            ChangeTreatmentFragment changeTreatmentFragment = new ChangeTreatmentFragment();
+            changeTreatmentFragment.setArguments(bundle);
+            // Go to change_treatment fragment
+            MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("treatmentlist").replace(R.id.main_container, changeTreatmentFragment).commit();
+        }
 
 
         public void setItem(Treatment item) {

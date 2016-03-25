@@ -116,7 +116,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
             TextView tvStatus = (TextView) itemView.findViewById(R.id.status);
             String statusString = item.getStatus();
-            if (statusString.equals("Pending")) {
+            if (statusString.contains("Pending")) {
                 tvStatus.setTextColor(Color.GREEN);
             } else if (statusString.equals("Confirmed")) {
                 tvStatus.setTextColor(Color.BLUE);

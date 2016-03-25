@@ -47,7 +47,7 @@ public class TreatmentCtrl {
         treatment.setDoctor(doctor);
         treatment.setPatient(patient);
         treatment.setInfo(info);
-        treatments.add(treatment);
+        treatments.add(0, treatment);
         return treatment;
     }
 

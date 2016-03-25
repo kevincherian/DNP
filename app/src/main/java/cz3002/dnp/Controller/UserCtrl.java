@@ -19,6 +19,8 @@ public class UserCtrl {
 
     public static User currentUser = new User();
 
+    public static User systemUser = getInstance().createUser(0, "System", null, null, null, false);
+
     public static UserCtrl getInstance() {
         if (instance == null) {
             instance = new UserCtrl();

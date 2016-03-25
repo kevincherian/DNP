@@ -20,8 +20,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import cz3002.dnp.Controller.NotificationCtrl;
 import cz3002.dnp.Controller.TreatmentCtrl;
+import cz3002.dnp.Controller.UserCtrl;
+import cz3002.dnp.Entity.Notification;
 import cz3002.dnp.Entity.Treatment;
+import cz3002.dnp.Entity.User;
 
 /**
  * Created by hizac on 23/2/2016.
@@ -105,7 +109,20 @@ public class ChangeTreatmentFragment extends Fragment {
             cancel(); // Stop current job, go back to Treatment List Fragment
             Toast.makeText(MainActivity.getActivity(), "Treatment updated!", Toast.LENGTH_LONG).show();
 
-            // TODO: code to notify partner
+            // Notify other party
+            // Notify with type as 0 (system notification)
+            Notification notiPartner = new Notification();
+            notiPartner.setTime(new Date());
+            notiPartner.setSender(UserCtrl.getInstance().currentUser);
+            User recipient = editedTreatment.getDoctor();
+            if (UserCtrl.getInstance().currentUser.isDoctor()) {
+                recipient = editedTreatment.getPatient();
+            }
+            notiPartner.setRecipient(recipient);
+            notiPartner.setType(0);
+            notiPartner.setContent(String.format(Constants.TREATMENT_NOTIFICATION, UserCtrl.getInstance().currentUser.getUsername()));
+            NotificationCtrl.getInstance().pushANotification(notiPartner);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

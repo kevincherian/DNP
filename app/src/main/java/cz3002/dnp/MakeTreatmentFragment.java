@@ -20,8 +20,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import cz3002.dnp.Controller.NotificationCtrl;
 import cz3002.dnp.Controller.TreatmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
+import cz3002.dnp.Entity.Notification;
 import cz3002.dnp.Entity.User;
 
 /**
@@ -166,10 +168,19 @@ public class MakeTreatmentFragment extends Fragment {
             Toast.makeText(MainActivity.getActivity(), "Treatment submitted!", Toast.LENGTH_LONG).show();
 
             // Notify other party
-            // Insert code here
-            // Insert code here
-            // Insert code here
-            // Insert code here
+            // Notify with type as 0 (system notification)
+            Notification notiPartner = new Notification();
+            notiPartner.setTime(new Date());
+            notiPartner.setSender(UserCtrl.getInstance().currentUser);
+            User recipient = doctor;
+            if (UserCtrl.getInstance().currentUser.isDoctor()) {
+                recipient = patient;
+            }
+            notiPartner.setRecipient(recipient);
+            notiPartner.setType(0);
+            notiPartner.setContent(String.format(Constants.TREATMENT_NOTIFICATION, UserCtrl.getInstance().currentUser.getUsername()));
+            NotificationCtrl.getInstance().pushANotification(notiPartner);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -7,21 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 
 import cz3002.dnp.Controller.AppointmentCtrl;
+import cz3002.dnp.Controller.NotificationCtrl;
 import cz3002.dnp.Controller.TreatmentCtrl;
 import cz3002.dnp.Controller.UserCtrl;
+import cz3002.dnp.Entity.Notification;
 
 /**
  * Created by hizac on 23/2/2016.
@@ -58,21 +50,21 @@ public class HomepageFragment extends Fragment {
             }
         });
 
-        // Get Communication Button
-        Button communicationListBtn = (Button) rootView.findViewById(R.id.communicationButton);
-        appointmentListBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toCommunicationList();
-            }
-        });
-
         // Get Treatment Button
         Button treatmentListBtn = (Button) rootView.findViewById(R.id.viewTreatmentButton);
         treatmentListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toTreatmentList();
+            }
+        });
+
+        // Get Notification Button
+        Button notificationListBtn = (Button) rootView.findViewById(R.id.notificationButton);
+        notificationListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toNotificationList();
             }
         });
 
@@ -96,7 +88,21 @@ public class HomepageFragment extends Fragment {
         });
         retrieveTreatments.start();
 
+        // Load notifications
+        Thread retrieveNotifications = new Thread(new Runnable() {
+            public void run() {
+                if (NotificationCtrl.getInstance().getNotifications().size() < 1) {
+                    NotificationCtrl.getInstance().retrieveNotifications();
+                }
+            }
+        });
+        retrieveNotifications.start();
+
         return rootView;
+    }
+
+    private void toNotificationList() {
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new NotificationListFragment()).commit();
     }
 
     private void toTreatmentList() {
@@ -111,7 +117,5 @@ public class HomepageFragment extends Fragment {
     private void toAppointmentList() {
         MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new AppointmentListFragment()).commit();
     }
-    private void toCommunicationList() {
-        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new CommunicationListFragment()).commit();
-    }
+
 }

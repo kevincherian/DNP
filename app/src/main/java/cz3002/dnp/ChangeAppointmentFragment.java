@@ -21,7 +21,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import cz3002.dnp.Controller.AppointmentCtrl;
+import cz3002.dnp.Controller.NotificationCtrl;
+import cz3002.dnp.Controller.UserCtrl;
 import cz3002.dnp.Entity.Appointment;
+import cz3002.dnp.Entity.Notification;
+import cz3002.dnp.Entity.User;
 
 /**
  * Created by hizac on 23/2/2016.
@@ -52,6 +56,7 @@ public class ChangeAppointmentFragment extends Fragment {
             }
         });
 
+        // Get Submit button
         Button submitBtn = (Button) rootView.findViewById(R.id.submitButton);
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,11 +65,21 @@ public class ChangeAppointmentFragment extends Fragment {
             }
         });
 
+        // Get Delete button
         Button deleteBtn = (Button) rootView.findViewById(R.id.deleteButton);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 delete(appointmentId);
+            }
+        });
+
+        // Get Confirm button
+        Button confirmBtn = (Button) rootView.findViewById(R.id.confirmButton);
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirm(appointmentId);
             }
         });
 
@@ -85,7 +100,7 @@ public class ChangeAppointmentFragment extends Fragment {
         int minute = timePicker.getCurrentMinute();
         // Set Date and Time to datetime
         Calendar cal = Calendar.getInstance();
-        cal.set(year,month,date,hour,minute);
+        cal.set(year, month, date, hour, minute);
         datetime.setTime(cal.getTimeInMillis());
 //        // Print out the time in a proper format
 //        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -107,6 +122,20 @@ public class ChangeAppointmentFragment extends Fragment {
         EditText info = (EditText) rootView.findViewById(R.id.infoField);
         info.setText(currentAppointment.getInfo());
         info.setEnabled(false);
+
+        // Show the confirm button if the current user has his/her right to confirm to a specific appointment
+        Button confirmBtn = (Button) rootView.findViewById(R.id.confirmButton);
+        confirmBtn.setVisibility(View.GONE);    // Firstly, remove the confirm button
+        boolean condition = currentAppointment.getStatus().contains(UserCtrl.currentUser.getUsername()); // current user is someone who has the right to confirm
+        if (condition) {
+            confirmBtn.setVisibility(View.VISIBLE);
+        }
+        // Hide Delete button if appointment already canceled
+        Button deleteBtn = (Button) rootView.findViewById(R.id.deleteButton);
+        if (currentAppointment.getStatus().contains("Canceled")) {
+            deleteBtn.setVisibility(View.GONE);
+        }
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(currentAppointment.getTime());
         DatePicker datePicker = (DatePicker) rootView.findViewById(R.id.dateField);
@@ -127,7 +156,10 @@ public class ChangeAppointmentFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String datetimeString = format.format(datetime);
 
-        String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
+        String statusString = String.format("Pending for %s", editedAppointment.getDoctor().getUsername()); // Status must be "Pending" because the other party has not confirmed
+        if (UserCtrl.getInstance().currentUser.isDoctor()) {
+            statusString = String.format("Pending for %s", editedAppointment.getPatient().getUsername());
+        }
         editedAppointment.setStatus(statusString);
 
         // Push all to server
@@ -144,7 +176,20 @@ public class ChangeAppointmentFragment extends Fragment {
             cancel(); // Stop current job, go back to Appointment List Fragment
             Toast.makeText(MainActivity.getActivity(), "Appointment updated!", Toast.LENGTH_LONG).show();
 
-            // TODO: code to notify partner
+            // Notify other party
+            // Notify with type as 0 (system notification)
+            Notification notiPartner = new Notification();
+            notiPartner.setTime(new Date());
+            notiPartner.setSender(UserCtrl.getInstance().currentUser);
+            User recipient = editedAppointment.getDoctor();
+            if (UserCtrl.getInstance().currentUser.isDoctor()) {
+                recipient = editedAppointment.getPatient();
+            }
+            notiPartner.setRecipient(recipient);
+            notiPartner.setType(0);
+            notiPartner.setContent(String.format(Constants.CHANGE_APPOINTMENT_NOTIFICATION, UserCtrl.getInstance().currentUser.getUsername()));
+            NotificationCtrl.getInstance().pushANotification(notiPartner);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,7 +217,56 @@ public class ChangeAppointmentFragment extends Fragment {
         cancel(); // Stop current job, go back to Appointment List Fragment
         Toast.makeText(MainActivity.getActivity(), "Appointment canceled!", Toast.LENGTH_LONG).show();
 
-        // TODO: code to notify partner
+        // Notify other party
+        // Notify with type as 0 (system notification)
+        Notification notiPartner = new Notification();
+        notiPartner.setTime(new Date());
+        notiPartner.setSender(UserCtrl.getInstance().currentUser);
+        User recipient = editedAppointment.getDoctor();
+        if (UserCtrl.getInstance().currentUser.isDoctor()) {
+            recipient = editedAppointment.getPatient();
+        }
+        notiPartner.setRecipient(recipient);
+        notiPartner.setType(0);
+        notiPartner.setContent(String.format(Constants.DELETE_APPOINTMENT_NOTIFICATION, UserCtrl.getInstance().currentUser.getUsername()));
+        NotificationCtrl.getInstance().pushANotification(notiPartner);
+    }
+
+    private void confirm(int appointmentId) {
+        Appointment currentAppointment = AppointmentCtrl.getInstance().getAppointments().get(appointmentId);
+        Appointment editedAppointment = currentAppointment;
+
+        editedAppointment.setStatus("Confirmed");
+        // Cancel from server
+        try {
+            String query = String.format("update `appointment` set status='Confirmed' where id=%d", currentAppointment.getId()); // query to delete an appointment
+            Document document = Jsoup.connect(Constants.SERVER + query).get();
+            String queryJson = document.body().html();
+            if (queryJson.equals("0")) { // Error happens
+                Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
+                return;
+            }
+            // Else, if success, continue
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        AppointmentCtrl.getInstance().getAppointments().set(appointmentId, editedAppointment); // Put the appointment just changed to internal database
+        cancel(); // Stop current job, go back to Appointment List Fragment
+        Toast.makeText(MainActivity.getActivity(), "Appointment confirmed!", Toast.LENGTH_LONG).show();
+
+        // Notify other party
+        // Notify with type as 0 (system notification)
+        Notification notiPartner = new Notification();
+        notiPartner.setTime(new Date());
+        notiPartner.setSender(UserCtrl.getInstance().currentUser);
+        User recipient = editedAppointment.getDoctor();
+        if (UserCtrl.getInstance().currentUser.isDoctor()) {
+            recipient = editedAppointment.getPatient();
+        }
+        notiPartner.setRecipient(recipient);
+        notiPartner.setType(0);
+        notiPartner.setContent(String.format(Constants.CONFIRM_APPOINTMENT_NOTIFICATION, UserCtrl.getInstance().currentUser.getUsername()));
+        NotificationCtrl.getInstance().pushANotification(notiPartner);
     }
 
     private void cancel() {

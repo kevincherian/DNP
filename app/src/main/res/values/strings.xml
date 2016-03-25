@@ -52,12 +52,12 @@
     <string name="change_appointment_text">Select a new Date/Time</string>
     <string name="new_appointment_text">New</string>
     <string name="manage_account_text">Manage Account</string>
-    <string name="communication_text">Communication</string>
+    <string name="notification_text">Notifications</string>
     <string name="appointment_info_hint">More information</string>
     <string name="communication_info_hint">Enter your message here</string>
     <string name="treatment_info_hint">More detail</string>
     <string name="title_activity_reminder">Reminder</string>
-    <string name="communication_list_text">Communication</string>
+    <string name="notification_list_text">Notification</string>
     <string name="new_communication_text">New</string>
     <string name="make_communication_text">New Chat</string>
 

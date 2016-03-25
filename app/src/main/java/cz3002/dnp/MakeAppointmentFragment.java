@@ -21,7 +21,10 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 import cz3002.dnp.Controller.AppointmentCtrl;
+import cz3002.dnp.Controller.NotificationCtrl;
 import cz3002.dnp.Controller.UserCtrl;
+import cz3002.dnp.Entity.Appointment;
+import cz3002.dnp.Entity.Notification;
 import cz3002.dnp.Entity.User;
 
 /**
@@ -148,12 +151,16 @@ public class MakeAppointmentFragment extends Fragment {
         User patient = UserCtrl.getInstance().getUser(patientUsernameString); // Get object patient
         EditText info = (EditText) rootView.findViewById(R.id.infoField);
         String infoString = info.getText().toString(); // Get information
-        String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
+
+        String statusString = String.format("Pending for %s", doctorUsernameString); // Status must be "Pending" because the other party has not confirmed
+        if (UserCtrl.getInstance().currentUser.isDoctor()) {
+            statusString = String.format("Pending for %s", patientUsernameString);
+        }
 
         // Push all to server
         try {
             String query = String.format("insert into `appointment` (time, doctorID, patientID, info, status) " +
-                    "values ('%s', '%d', '%d', '%s', '%s')", datetimeString, doctor.getId(), patient.getId(), infoString, statusString); // query to check username existence
+                    "values ('%s', '%d', '%d', '%s', '%s')", datetimeString, doctor.getId(), patient.getId(), infoString, statusString);
             query = query.replace("\n","%0A");
             Document document = Jsoup.connect(Constants.SERVER + query).get();
             String queryJson = document.body().html();
@@ -162,15 +169,24 @@ public class MakeAppointmentFragment extends Fragment {
                 return;
             }
             // Otherwise, if success, go back to Appointment List Fragment and notify user
-            AppointmentCtrl.getInstance().retrieveAnAppointment(datetime, doctor, patient); // Put the appointment just created to internal database
+            Appointment newAppointment = AppointmentCtrl.getInstance().retrieveAnAppointment(datetime, doctor, patient); // Put the appointment just created to internal database
             cancel(); // Stop current job, go back to Appointment List Fragment
             Toast.makeText(MainActivity.getActivity(), "Appointment submitted!", Toast.LENGTH_LONG).show();
 
             // Notify other party
-            // Insert code here
-            // Insert code here
-            // Insert code here
-            // Insert code here
+            // Notify with type as 0 (system notification)
+            Notification notiPartner = new Notification();
+            notiPartner.setTime(new Date());
+            notiPartner.setSender(UserCtrl.getInstance().currentUser);
+            User recipient = doctor;
+            if (UserCtrl.getInstance().currentUser.isDoctor()) {
+                recipient = patient;
+            }
+            notiPartner.setRecipient(recipient);
+            notiPartner.setType(0);
+            notiPartner.setContent(String.format(Constants.NEW_APPOINTMENT_NOTIFICATION, UserCtrl.getInstance().currentUser.getUsername()));
+            NotificationCtrl.getInstance().pushANotification(notiPartner);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

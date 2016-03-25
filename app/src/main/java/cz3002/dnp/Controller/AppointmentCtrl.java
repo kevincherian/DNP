@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import cz3002.dnp.Constants;
@@ -111,6 +112,7 @@ public class AppointmentCtrl {
 
             result = createAppointment(id, time, doctor, patient, infoString, statusString);
 
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -128,7 +130,7 @@ public class AppointmentCtrl {
         appointment.setPatient(patient);
         appointment.setInfo(info);
         appointment.setStatus(status);
-        appointments.add(appointment);
+        appointments.add(0, appointment);
         return appointment;
     }
 

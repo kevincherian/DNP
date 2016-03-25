@@ -58,6 +58,15 @@ public class HomepageFragment extends Fragment {
             }
         });
 
+        // Get Communication Button
+        Button communicationListBtn = (Button) rootView.findViewById(R.id.communicationButton);
+        appointmentListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toCommunicationList();
+            }
+        });
+
         // Get Treatment Button
         Button treatmentListBtn = (Button) rootView.findViewById(R.id.viewTreatmentButton);
         treatmentListBtn.setOnClickListener(new View.OnClickListener() {
@@ -101,5 +110,8 @@ public class HomepageFragment extends Fragment {
 
     private void toAppointmentList() {
         MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new AppointmentListFragment()).commit();
+    }
+    private void toCommunicationList() {
+        MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home").replace(R.id.main_container, new CommunicationListFragment()).commit();
     }
 }

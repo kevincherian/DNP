@@ -93,7 +93,7 @@ public class NotificationCtrl {
         notification.setRecipient(recipient);
         notification.setContent(content);
         notification.setType(type);
-        // To add the new notification to the beginning of the arraylist
+        // To add the new notification to the beginning of the arrayList
         notifications.add(0, notification);
 
         return notification;

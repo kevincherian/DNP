@@ -47,7 +47,7 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
         Toast.makeText(context, result, Toast.LENGTH_LONG).show();
     }
 
-    private void syncDB(String user_id){
+    private void syncDB(String user_id) {
         DatabaseHandler db = new DatabaseHandler(context);
         db.deleteAllAppointments();
         db.deleteAllTreatments();
@@ -93,11 +93,11 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
                 List<Appointment> aps = db.getAllAppointments();
 
                 for (Appointment ap : aps) {
-                    String log = "Id: "+ap.getId()+
-                            " ,Patient: " + ap.getPatient()+
-                            " ,Doctor: " + ap.getDoctor()+
-                            " ,Time: " + ap.getTime()+
-                            " ,Info: " + ap.getInfo()+
+                    String log = "Id: " + ap.getId() +
+                            " ,Patient: " + ap.getPatient() +
+                            " ,Doctor: " + ap.getDoctor() +
+                            " ,Time: " + ap.getTime() +
+                            " ,Info: " + ap.getInfo() +
                             " ,Status: " + ap.getStatus();
                     Log.d("Appointment: ", log);
                 }
@@ -144,11 +144,11 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
 
                     String text = queryResultObj.getString("text");
                     db.addTreatment(treatment_id, patient, doctor, startdate, enddate, text);
-                    String log = "Id: "+treatment_id+
-                            " ,Patient: " + patient+
-                            " ,Doctor: " + doctor+
-                            " ,Start Date: " + startdate+
-                            " ,End Date: " + enddate+
+                    String log = "Id: " + treatment_id +
+                            " ,Patient: " + patient +
+                            " ,Doctor: " + doctor +
+                            " ,Start Date: " + startdate +
+                            " ,End Date: " + enddate +
                             " ,Text: " + text;
                     Log.d("Inserted: ", log);
                 }
@@ -156,11 +156,11 @@ public class SyncDBAsyncCtrl extends AsyncTask<String, Void, String> {
                 List<Treatment> trs = db.getAllTreatments();
 
                 for (Treatment tr : trs) {
-                    String log = "Id: "+tr.getId()+
-                            " ,Patient: " + tr.getPatient()+
-                            " ,Doctor: " + tr.getDoctor()+
-                            " ,Start Date: " + tr.getStartdate()+
-                            " ,End Date: " + tr.getEnddate()+
+                    String log = "Id: " + tr.getId() +
+                            " ,Patient: " + tr.getPatient() +
+                            " ,Doctor: " + tr.getDoctor() +
+                            " ,Start Date: " + tr.getStartdate() +
+                            " ,End Date: " + tr.getEnddate() +
                             " ,Text: " + tr.getText();
                     Log.d("Treatment: ", log);
                 }

@@ -54,7 +54,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:hint="@string/communication_info_hint"
-                android:inputType="textLongMessage"
                 android:maxLines="3"
                 android:allowUndo="true" />
 

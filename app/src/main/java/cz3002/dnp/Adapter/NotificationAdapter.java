@@ -3,6 +3,7 @@ package cz3002.dnp.Adapter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +17,7 @@ import cz3002.dnp.Controller.NotificationCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 import cz3002.dnp.Entity.Notification;
 import cz3002.dnp.MainActivity;
+import cz3002.dnp.MakeCommunicationFragment;
 import cz3002.dnp.R;
 
 /**
@@ -25,6 +27,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private ArrayList<Notification> notifications;
     public NotificationAdapter(){
         notifications = NotificationCtrl.getInstance().getNotifications();
+        //Log.d("Notif", notifications.toString());
     }
     @Override
     public NotificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,6 +39,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(NotificationViewHolder holder, int position) {
         Notification notification = notifications.get(position);
+        Log.d("n", "" + notification.getId());
         holder.setItem(notification);
     }
 
@@ -54,7 +58,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    goToAnotherPage(item);
+                    goToAnotherPage(item);
                 }
             });
             itemView.setOnTouchListener(new View.OnTouchListener() {
@@ -67,6 +71,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                             break;
 
                         case MotionEvent.ACTION_UP:
+                            goToAnotherPage(item);
                             itemView.setBackgroundColor(Color.parseColor("#FF329593"));
                             break;
 
@@ -80,31 +85,31 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             });
         }
 
-//        private void goToAnotherPage(Notification item) {
-//            // Pass notification to change_notification fragment
+        private void goToAnotherPage(Notification item) {
+            // Pass notification to change_notification fragment
 //            Bundle bundle = new Bundle();
 //            bundle.putString("notificationId", String.format("%d", NotificationCtrl.getInstance().getNotifications().indexOf(item)));
 //            ChangeNotificationFragment changeNotificationFragment = new ChangeNotificationFragment();
 //            changeNotificationFragment.setArguments(bundle);
-//            // Go to change_notification fragment
-//            MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("notificationlist").replace(R.id.main_container, changeNotificationFragment).commit();
-//        }
+            // Go to change_notification fragment
+            MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("notificationlist").replace(R.id.main_container, new MakeCommunicationFragment()).commit();
+        }
 
 
         public void setItem(Notification item) {
-            this.item = item;
-            TextView tvTime = (TextView)itemView.findViewById(R.id.time);
-            // Reformat time
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            String timeString = String.format("%s", format.format(item.getTime()));
-            tvTime.setText(timeString);
+                this.item = item;
+                TextView tvTime = (TextView) itemView.findViewById(R.id.time);
+                // Reformat time
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                String timeString = String.format("%s", format.format(item.getTime()));
+                tvTime.setText(timeString);
 
-            TextView tvSender = (TextView) itemView.findViewById(R.id.sender);
-            String partnerString = String.format("From: %s", item.getSender().getUsername());
-            tvSender.setText(partnerString);
+                TextView tvSender = (TextView) itemView.findViewById(R.id.sender);
+                String partnerString = String.format("From: %s", item.getSender().getUsername());
+                tvSender.setText(partnerString);
 
-            TextView tvContent = (TextView) itemView.findViewById(R.id.content);
-            tvContent.setText(item.getContent());
+                TextView tvContent = (TextView) itemView.findViewById(R.id.content);
+                tvContent.setText(item.getContent());
 
         }
     }

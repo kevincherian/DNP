@@ -21,7 +21,9 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 import cz3002.dnp.Controller.AppointmentCtrl;
+import cz3002.dnp.Controller.NotificationCtrl;
 import cz3002.dnp.Controller.UserCtrl;
+import cz3002.dnp.Entity.Notification;
 import cz3002.dnp.Entity.User;
 
 /**
@@ -32,7 +34,7 @@ public class MakeCommunicationFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = (ViewGroup) inflater.inflate(R.layout.activity_make_appointment, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.activity_make_communication, container, false);
 
         autoFillInCurrentUser();
 
@@ -45,8 +47,8 @@ public class MakeCommunicationFragment extends Fragment {
             }
         });
 
-        Button submitBtn = (Button) rootView.findViewById(R.id.submitButton);
-        submitBtn.setOnClickListener(new View.OnClickListener() {
+        Button sendBtn = (Button) rootView.findViewById(R.id.sendButton);
+        sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 submit();
@@ -91,29 +93,6 @@ public class MakeCommunicationFragment extends Fragment {
         return true;
     }
 
-    // Return date and time from DatePicker and TimePicker
-    private Date getDateTime() {
-        Date datetime = new Date();
-        // Get Date
-        DatePicker datePicker = (DatePicker) rootView.findViewById(R.id.dateField);
-        int year = datePicker.getYear();
-        int month = datePicker.getMonth();
-        int date = datePicker.getDayOfMonth();
-        // Get Time
-        TimePicker timePicker = (TimePicker) rootView.findViewById(R.id.timeField);
-        int hour = timePicker.getHour();
-        int minute = timePicker.getMinute();
-        // Set Date and Time to datetime
-        Calendar cal = Calendar.getInstance();
-        cal.set(year,month,date,hour,minute);
-        datetime.setTime(cal.getTimeInMillis());
-//        // Print out the time in a proper format
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        String datetimeString = format.format(datetime);
-//        Toast.makeText(getContext(), datetimeString, Toast.LENGTH_LONG).show();
-        return datetime;
-    }
-
     private void autoFillInCurrentUser () {
         // Set given info
         String usernameString = UserCtrl.getInstance().currentUser.getUsername();
@@ -137,9 +116,9 @@ public class MakeCommunicationFragment extends Fragment {
         }
         // If usernames are correct, continue
         // Get all the info
-        Date datetime = getDateTime(); // Get date and time
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String datetimeString = format.format(datetime);
+//        Date datetime = getDateTime(); // Get date and time
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        String datetimeString = format.format(datetime);
         EditText doctorUsername = (EditText) rootView.findViewById(R.id.doctorField);
         String doctorUsernameString = doctorUsername.getText().toString(); // Get doctor username
         User doctor = UserCtrl.getInstance().getUser(doctorUsernameString); // Get object doctor
@@ -148,30 +127,28 @@ public class MakeCommunicationFragment extends Fragment {
         User patient = UserCtrl.getInstance().getUser(patientUsernameString); // Get object patient
         EditText info = (EditText) rootView.findViewById(R.id.infoField);
         String infoString = info.getText().toString(); // Get information
-        String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
+        //String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
 
         // Push all to server
         try {
-            String query = String.format("insert into `appointment` (time, doctorID, patientID, info, status) " +
-                    "values ('%s', '%d', '%d', '%s', '%s')", datetimeString, doctor.getId(), patient.getId(), infoString, statusString); // query to check username existence
-            query = query.replace("\n","%0A");
-            Document document = Jsoup.connect(Constants.SERVER + query).get();
-            String queryJson = document.body().html();
-            if (queryJson.equals("0")) { // Error happens
-                Toast.makeText(getContext(), "An unexpected error occurs.\nPlease try again!", Toast.LENGTH_LONG).show();
-                return;
+            Notification notiPartner = new Notification();
+            notiPartner.setTime(new Date());
+            notiPartner.setSender(UserCtrl.getInstance().currentUser);
+            User recipient = doctor;
+            if (UserCtrl.getInstance().currentUser.isDoctor()) {
+                recipient = patient;
             }
-            // Otherwise, if success, go back to Appointment List Fragment and notify user
-            AppointmentCtrl.getInstance().retrieveAnAppointment(datetime, doctor, patient); // Put the appointment just created to internal database
-            cancel(); // Stop current job, go back to Appointment List Fragment
-            Toast.makeText(MainActivity.getActivity(), "Appointment submitted!", Toast.LENGTH_LONG).show();
+            notiPartner.setRecipient(recipient);
+            notiPartner.setType(1);
+            notiPartner.setContent(String.format("%s",infoString));
+            NotificationCtrl.getInstance().pushANotification(notiPartner);
 
-            // Notify other party
-            // Insert code here
-            // Insert code here
-            // Insert code here
-            // Insert code here
-        } catch (IOException e) {
+            // Otherwise, if success, go back to Appointment List Fragment and notify user
+            NotificationCtrl.getInstance().retrieveNotifications(); // Put the appointment just created to internal database
+            cancel(); // Stop current job, go back to Appointment List Fragment
+            Toast.makeText(MainActivity.getActivity(), "Message sent!", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

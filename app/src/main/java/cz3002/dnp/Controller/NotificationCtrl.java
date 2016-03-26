@@ -43,6 +43,7 @@ public class NotificationCtrl {
 
     // Get all notifications from server
     public void retrieveNotifications(){
+        notifications.clear();
         try {
             if (UserCtrl.getInstance().currentUser.getId() < 0) { return; } // If user has not logged in
             String query = String.format("select * from `notification` where recipientId=%d", UserCtrl.getInstance().currentUser.getId());

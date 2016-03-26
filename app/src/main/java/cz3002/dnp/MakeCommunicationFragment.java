@@ -94,18 +94,31 @@ public class MakeCommunicationFragment extends Fragment {
     }
 
     private void autoFillInCurrentUser () {
+        // Catch partner info
+        String partnerUsernameString = "";
+        try {
+            Bundle bundle = this.getArguments();
+            partnerUsernameString = bundle.get("partner").toString();
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
         // Set given info
         String usernameString = UserCtrl.getInstance().currentUser.getUsername();
         boolean isCurrentDoctor = UserCtrl.getInstance().currentUser.isDoctor();
 
-        EditText userField;
+        EditText userField, partnerField;
         if(isCurrentDoctor) { // If current user is a doctor
             userField = (EditText) rootView.findViewById(R.id.doctorField);
+            partnerField = (EditText) rootView.findViewById(R.id.patientField);
         } else {
             userField = (EditText) rootView.findViewById(R.id.patientField);
+            partnerField = (EditText) rootView.findViewById(R.id.doctorField);
         }
         userField.setText(usernameString);
         userField.setEnabled(false);
+        partnerField.setText(partnerUsernameString);
     }
 
     private void submit() {
@@ -127,7 +140,7 @@ public class MakeCommunicationFragment extends Fragment {
         User patient = UserCtrl.getInstance().getUser(patientUsernameString); // Get object patient
         EditText info = (EditText) rootView.findViewById(R.id.infoField);
         String infoString = info.getText().toString(); // Get information
-        //String statusString = "Pending"; // Status must be "Pending" because the other party has not confirmed
+        infoString = infoString.replace("\n", "%0A").replace("\r", "");
 
         // Push all to server
         try {

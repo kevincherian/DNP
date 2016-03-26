@@ -86,13 +86,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
 
         private void goToAnotherPage(Notification item) {
+            if (item.getType() != 1) {return;}
             // Pass notification to change_notification fragment
-//            Bundle bundle = new Bundle();
-//            bundle.putString("notificationId", String.format("%d", NotificationCtrl.getInstance().getNotifications().indexOf(item)));
-//            ChangeNotificationFragment changeNotificationFragment = new ChangeNotificationFragment();
-//            changeNotificationFragment.setArguments(bundle);
+            Bundle bundle = new Bundle();
+            bundle.putString("partner", item.getSender().getUsername());
+            MakeCommunicationFragment makeCommunicationFragment = new MakeCommunicationFragment();
+            makeCommunicationFragment.setArguments(bundle);
             // Go to change_notification fragment
-            MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("notificationlist").replace(R.id.main_container, new MakeCommunicationFragment()).commit();
+            MainActivity.getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("notificationlist").replace(R.id.main_container, makeCommunicationFragment).commit();
         }
 
 

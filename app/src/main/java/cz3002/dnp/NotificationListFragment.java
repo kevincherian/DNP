@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import cz3002.dnp.Adapter.NotificationAdapter;
+import cz3002.dnp.Controller.NotificationCtrl;
 import cz3002.dnp.Controller.UserCtrl;
 
 /**
@@ -22,6 +23,7 @@ public class NotificationListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.activity_notification_list, container, false);
+
 
         Button newMessageBtn = (Button) rootView.findViewById(R.id.newMessageButton);
         newMessageBtn.setOnClickListener(new View.OnClickListener() {

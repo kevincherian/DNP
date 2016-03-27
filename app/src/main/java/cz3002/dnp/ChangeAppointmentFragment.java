@@ -130,10 +130,12 @@ public class ChangeAppointmentFragment extends Fragment {
         if (condition) {
             confirmBtn.setVisibility(View.VISIBLE);
         }
-        // Hide Delete button if appointment already canceled
+        // Hide Delete button and Save changes button if appointment already canceled
         Button deleteBtn = (Button) rootView.findViewById(R.id.deleteButton);
+        Button savechangesBtn = (Button) rootView.findViewById(R.id.submitButton);
         if (currentAppointment.getStatus().contains("Canceled")) {
             deleteBtn.setVisibility(View.GONE);
+            savechangesBtn.setEnabled(false);
         }
 
         Calendar cal = Calendar.getInstance();

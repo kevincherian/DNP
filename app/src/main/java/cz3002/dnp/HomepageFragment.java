@@ -91,7 +91,9 @@ public class HomepageFragment extends Fragment {
         // Load notifications
         Thread retrieveNotifications = new Thread(new Runnable() {
             public void run() {
-                NotificationCtrl.getInstance().retrieveNotifications();
+                if (TreatmentCtrl.getInstance().getTreatments().size() < 1) {
+                    NotificationCtrl.getInstance().retrieveNotifications();
+                }
             }
         });
         retrieveNotifications.start();
